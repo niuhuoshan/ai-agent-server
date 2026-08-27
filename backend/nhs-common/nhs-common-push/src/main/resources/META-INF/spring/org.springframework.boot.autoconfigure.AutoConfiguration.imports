@@ -1,0 +1,3 @@
+group.aitools.nhs.common.push.config.MessageAutoConfiguration
+group.aitools.nhs.common.push.config.MessageSseConfiguration
+group.aitools.nhs.common.push.config.MessageWebSocketConfiguration

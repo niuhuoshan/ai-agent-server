@@ -1,0 +1,45 @@
+name: nhs
+
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:-dockerproxy.net/pgvector/pgvector:pg17}
+    container_name: nhs-postgres
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      POSTGRES_DB: ${POSTGRES_DB:-agent_server}
+      POSTGRES_USER: ${POSTGRES_USER:-agent_server}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agent_server}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - nhs-postgres-data:/var/lib/postgresql/data
+      - ../sql/postgres:/opt/nhs/sql:ro
+      - ./postgres-init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: ${REDIS_IMAGE:-dockerproxy.net/library/redis:8-alpine}
+    container_name: nhs-redis
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-nhs123}
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:-nhs123}"]
+    volumes:
+      - nhs-redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$${REDIS_PASSWORD}\" ping | grep PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+volumes:
+  nhs-postgres-data:
+  nhs-redis-data:

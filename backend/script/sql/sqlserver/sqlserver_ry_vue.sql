@@ -1,0 +1,3472 @@
+create table sys_social
+(
+    id                 bigint            NOT NULL,
+    user_id            bigint            NOT NULL,
+    auth_id            nvarchar(255)     NOT NULL,
+    source             nvarchar(255)     NOT NULL,
+    open_id            nvarchar(255)     NULL,
+    user_name          nvarchar(30)      NOT NULL,
+    nick_name          nvarchar(30)      DEFAULT ('')   NULL,
+    email              nvarchar(255)     DEFAULT ('')   NULL,
+    avatar             nvarchar(500)     DEFAULT ('')   NULL,
+    access_token       nvarchar(2000)    NOT NULL,
+    expire_in          bigint            NULL,
+    refresh_token      nvarchar(2000)    NULL,
+    access_code        nvarchar(255)     NULL,
+    union_id           nvarchar(255)     NULL,
+    scope              nvarchar(255)     NULL,
+    token_type         nvarchar(255)     NULL,
+    id_token           nvarchar(2000)    NULL,
+    mac_algorithm      nvarchar(255)     NULL,
+    mac_key            nvarchar(255)     NULL,
+    code               nvarchar(255)     NULL,
+    oauth_token        nvarchar(255)     NULL,
+    oauth_token_secret nvarchar(255)     NULL,
+    create_dept        bigint,
+    create_by          bigint,
+    create_time        datetime2(7),
+    update_by          bigint,
+    update_time        datetime2(7),
+    del_flag           nchar             DEFAULT ('0')   NULL,
+    CONSTRAINT PK__sys_social__B21E8F2427725F8A PRIMARY KEY CLUSTERED (id)
+    WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+    ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'id' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'user_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'平台+平台唯一id' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'auth_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户来源' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'source'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'平台编号唯一id' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'open_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'登录账号' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'user_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户昵称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'nick_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户邮箱' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'email'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'头像地址' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'avatar'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户的授权令牌' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'access_token'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户的授权令牌的有效期，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'expire_in'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'刷新令牌，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'refresh_token'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'平台的授权信息，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'access_code'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户的 unionid' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'union_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'授予的权限，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'scope'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'个别平台的授权信息，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'token_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'id token，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'id_token'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'小米平台用户的附带属性，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'mac_algorithm'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'小米平台用户的附带属性，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'mac_key'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户的授权code，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'code'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'Twitter平台用户的附带属性，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'oauth_token'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'Twitter平台用户的附带属性，部分平台可能没有' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'oauth_token_secret'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'删除标志（0代表存在 1代表删除）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'del_flag'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social',
+    'COLUMN', N'update_time'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'社会化关系表',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_social'
+GO
+
+
+CREATE TABLE gen_table
+(
+    table_id          bigint                         NOT NULL,
+    data_name         nvarchar(200) DEFAULT ''       NULL,
+    table_name        nvarchar(200) DEFAULT ''       NULL,
+    table_comment     nvarchar(500) DEFAULT ''       NULL,
+    class_name        nvarchar(100) DEFAULT ''       NULL,
+    tpl_category      nvarchar(200) DEFAULT ('crud') NULL,
+    frontend_type     nvarchar(50)  DEFAULT ('vue')  NULL,
+    package_name      nvarchar(100)                  NULL,
+    module_name       nvarchar(30)                   NULL,
+    business_name     nvarchar(30)                   NULL,
+    function_name     nvarchar(50)                   NULL,
+    function_author   nvarchar(50)                   NULL,
+    gen_type          nchar(1)      DEFAULT ('0')    NULL,
+    gen_path          nvarchar(200) DEFAULT ('/')    NULL,
+    options           nvarchar(1000)                 NULL,
+    create_dept       bigint                         NULL,
+    create_by         bigint                         NULL,
+    create_time       datetime2(7)                   NULL,
+    update_by         bigint                         NULL,
+    update_time       datetime2(7)                   NULL,
+    remark            nvarchar(500)                  NULL,
+    CONSTRAINT PK__gen_tabl__B21E8F2427725F8A PRIMARY KEY CLUSTERED (table_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'编号' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'table_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'数据源名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'data_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'表名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'table_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'表描述' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'table_comment'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'实体类名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'class_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'使用的模板（crud单表操作 tree树表操作）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'tpl_category'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'前端模板类型，对应 vm 下的模板目录' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'frontend_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'生成包路径' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'package_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'生成模块名' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'module_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'生成业务名' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'business_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'生成功能名' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'function_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'生成功能作者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'function_author'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'生成代码方式（0zip压缩包 1自定义路径）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'gen_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'生成路径（不填默认项目路径）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'gen_path'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'其它生成选项' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'options'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'代码生成业务表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table'
+GO
+
+CREATE TABLE gen_table_column
+(
+    column_id      bigint                       NOT NULL,
+    table_id       bigint                       NULL,
+    column_name    nvarchar(200)                NULL,
+    column_comment nvarchar(500)                NULL,
+    column_type    nvarchar(100)                NULL,
+    java_type      nvarchar(500)                NULL,
+    java_field     nvarchar(200)                NULL,
+    is_pk          nchar(1)                     NULL,
+    is_increment   nchar(1)                     NULL,
+    is_required    nchar(1)                     NULL,
+    is_insert      nchar(1)                     NULL,
+    is_edit        nchar(1)                     NULL,
+    is_list        nchar(1)                     NULL,
+    is_query       nchar(1)                     NULL,
+    query_type     nvarchar(200) DEFAULT ('EQ') NULL,
+    html_type      nvarchar(200)                NULL,
+    dict_type      nvarchar(200) DEFAULT ''     NULL,
+    sort           int                          NULL,
+    create_dept    bigint                       NULL,
+    create_by      bigint                       NULL,
+    create_time    datetime2(7)                 NULL,
+    update_by      bigint                       NULL,
+    update_time    datetime2(7)                 NULL,
+    CONSTRAINT PK__gen_tabl__E301851F2E68B4E8 PRIMARY KEY CLUSTERED (column_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'编号' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'column_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'归属表编号' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'table_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'列名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'column_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'列描述' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'column_comment'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'列类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'column_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'JAVA类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'java_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'JAVA字段名' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'java_field'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否主键（1是）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'is_pk'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否自增（1是）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'is_increment'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否必填（1是）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'is_required'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否为插入字段（1是）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'is_insert'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否编辑字段（1是）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'is_edit'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否列表字段（1是）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'is_list'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否查询字段（1是）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'is_query'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'查询方式（等于、不等于、大于、小于、范围）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'query_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'显示类型（文本框、文本域、下拉框、复选框、单选框、日期控件）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'html_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'dict_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'排序' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'sort'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'代码生成业务表字段' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'gen_table_column'
+GO
+
+CREATE TABLE sys_config
+(
+    config_id    bigint                      NOT NULL,
+    config_name  nvarchar(100) DEFAULT ''    NULL,
+    config_key   nvarchar(100) DEFAULT ''    NULL,
+    config_value nvarchar(500) DEFAULT ''    NULL,
+    config_type  nchar(1)      DEFAULT ('N') NULL,
+    create_dept  bigint                      NULL,
+    create_by    bigint                      NULL,
+    create_time  datetime2(7)                NULL,
+    update_by    bigint                      NULL,
+    update_time  datetime2(7)                NULL,
+    remark       nvarchar(500)               NULL,
+    CONSTRAINT PK__sys_conf__4AD1BFF182643682 PRIMARY KEY CLUSTERED (config_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'参数主键' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'config_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'参数名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'config_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'参数键名' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'config_key'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'参数键值' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'config_value'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'系统内置（Y是 N否）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'config_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'参数配置表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_config'
+GO
+
+INSERT sys_config VALUES (1761700000000000001, N'用户管理-账号初始密码', N'sys.user.initPassword', N'123456', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'初始化密码 123456')
+GO
+INSERT sys_config VALUES (1761700000000000002, N'账号自助-是否开启用户注册功能', N'sys.account.registerUser', N'false', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'是否开启注册用户功能（true开启，false关闭）')
+GO
+INSERT sys_config VALUES (1761700000000000003, N'OSS预览列表资源开关', N'sys.oss.previewListResource', N'true', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'true:开启, false:关闭');
+GO
+
+CREATE TABLE sys_dept
+(
+    dept_id     bigint                     NOT NULL,
+    parent_id   bigint       DEFAULT ((0)) NULL,
+    ancestors   nvarchar(500)DEFAULT ''    NULL,
+    dept_name   nvarchar(30)               NULL,
+    dept_category nvarchar(100) DEFAULT '' NULL,
+    order_num   int          DEFAULT ((0)) NULL,
+    leader      bigint                     NULL,
+    phone       nvarchar(11)               NULL,
+    email       nvarchar(50)               NULL,
+    status      nchar(1)     DEFAULT ('0') NULL,
+    del_flag    nchar(1)     DEFAULT ('0') NULL,
+    create_dept bigint                     NULL,
+    create_by   bigint                     NULL,
+    create_time datetime2(7)               NULL,
+    update_by   bigint                     NULL,
+    update_time datetime2(7)               NULL,
+    CONSTRAINT PK__sys_dept__DCA659747DE13804 PRIMARY KEY CLUSTERED (dept_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_dept_parent_id ON sys_dept (parent_id)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门id' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'dept_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'父部门id' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'parent_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'祖级列表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'ancestors'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'dept_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门类别编码' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'dept_category'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'显示顺序' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'order_num'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'负责人' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'leader'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'联系电话' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'phone'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'邮箱' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'email'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门状态（0正常 1停用）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'删除标志（0代表存在 1代表删除）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'del_flag'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dept'
+GO
+
+INSERT sys_dept VALUES (1761000000000000100, 0, N'0', N'XXX科技', NULL, 0, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000101, 1761000000000000100, N'0,1761000000000000100', N'深圳总公司', NULL, 1, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000102, 1761000000000000100, N'0,1761000000000000100', N'长沙分公司', NULL, 2, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000103, 1761000000000000101, N'0,1761000000000000100,1761000000000000101', N'研发部门', NULL, 1, 1761100000000000001, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000104, 1761000000000000101, N'0,1761000000000000100,1761000000000000101', N'市场部门', NULL, 2, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000105, 1761000000000000101, N'0,1761000000000000100,1761000000000000101', N'测试部门', NULL, 3, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000106, 1761000000000000101, N'0,1761000000000000100,1761000000000000101', N'财务部门', NULL, 4, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000107, 1761000000000000101, N'0,1761000000000000100,1761000000000000101', N'运维部门', NULL, 5, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000108, 1761000000000000102, N'0,1761000000000000100,1761000000000000102', N'市场部门', NULL, 1, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+INSERT sys_dept VALUES (1761000000000000109, 1761000000000000102, N'0,1761000000000000100,1761000000000000102', N'财务部门', NULL, 2, NULL, N'15888888888', N'xxx@qq.com', N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL)
+GO
+
+CREATE TABLE sys_dict_data
+(
+    dict_code   bigint                      NOT NULL,
+    dict_sort   int           DEFAULT ((0)) NULL,
+    dict_label  nvarchar(100) DEFAULT ''    NULL,
+    dict_value  nvarchar(100) DEFAULT ''    NULL,
+    dict_type   nvarchar(100) DEFAULT ''    NULL,
+    css_class   nvarchar(100)               NULL,
+    list_class  nvarchar(100)               NULL,
+    is_default  nchar(1)      DEFAULT ('N') NULL,
+    create_dept bigint                      NULL,
+    create_by   bigint                      NULL,
+    create_time datetime2(7)                NULL,
+    update_by   bigint                      NULL,
+    update_time datetime2(7)                NULL,
+    remark      nvarchar(500)               NULL,
+    CONSTRAINT PK__sys_dict__19CBC34B661AF3B3 PRIMARY KEY CLUSTERED (dict_code)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_dict_data_type ON sys_dict_data (dict_type)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典编码' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'dict_code'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典排序' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'dict_sort'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典标签' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'dict_label'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典键值' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'dict_value'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'dict_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'样式属性（其他样式扩展）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'css_class'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'表格回显样式' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'list_class'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否默认（Y是 N否）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'is_default'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典数据表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_data'
+GO
+
+INSERT sys_dict_data VALUES (1761600000000000001, 1, N'男', N'0', N'sys_user_gender', N'', N'', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'性别男')
+GO
+INSERT sys_dict_data VALUES (1761600000000000002, 2, N'女', N'1', N'sys_user_gender', N'', N'', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'性别女')
+GO
+INSERT sys_dict_data VALUES (1761600000000000003, 3, N'未知', N'2', N'sys_user_gender', N'', N'', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'性别未知')
+GO
+INSERT sys_dict_data VALUES (1761600000000000004, 1, N'显示', N'0', N'sys_show_hide', N'', N'primary', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'显示菜单')
+GO
+INSERT sys_dict_data VALUES (1761600000000000005, 2, N'隐藏', N'1', N'sys_show_hide', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'隐藏菜单')
+GO
+INSERT sys_dict_data VALUES (1761600000000000006, 1, N'正常', N'0', N'sys_normal_disable', N'', N'primary', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'正常状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000007, 2, N'停用', N'1', N'sys_normal_disable', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'停用状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000008, 1, N'正常', N'0', N'sys_job_status', N'', N'primary', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'正常状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000009, 2, N'暂停', N'1', N'sys_job_status', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'停用状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000010, 1, N'默认', N'DEFAULT', N'sys_job_group', N'', N'', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'默认分组')
+GO
+INSERT sys_dict_data VALUES (1761600000000000011, 2, N'系统', N'SYSTEM', N'sys_job_group', N'', N'', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统分组')
+GO
+INSERT sys_dict_data VALUES (1761600000000000012, 1, N'是', N'Y', N'sys_yes_no', N'', N'primary', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统默认是')
+GO
+INSERT sys_dict_data VALUES (1761600000000000013, 2, N'否', N'N', N'sys_yes_no', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统默认否')
+GO
+INSERT sys_dict_data VALUES (1761600000000000014, 1, N'通知', N'1', N'sys_notice_type', N'', N'warning', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'通知')
+GO
+INSERT sys_dict_data VALUES (1761600000000000015, 2, N'公告', N'2', N'sys_notice_type', N'', N'success', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'公告')
+GO
+INSERT sys_dict_data VALUES (1761600000000000016, 1, N'正常', N'0', N'sys_notice_status', N'', N'primary', N'Y', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'正常状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000017, 2, N'关闭', N'1', N'sys_notice_status', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'关闭状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000029, 99, N'其他', N'0', N'sys_oper_type', N'', N'info', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'其他操作');
+GO
+INSERT sys_dict_data VALUES (1761600000000000018, 1, N'新增', N'1', N'sys_oper_type', N'', N'info', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'新增操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000019, 2, N'修改', N'2', N'sys_oper_type', N'', N'info', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'修改操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000020, 3, N'删除', N'3', N'sys_oper_type', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'删除操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000021, 4, N'授权', N'4', N'sys_oper_type', N'', N'primary', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'授权操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000022, 5, N'导出', N'5', N'sys_oper_type', N'', N'warning', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'导出操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000023, 6, N'导入', N'6', N'sys_oper_type', N'', N'warning', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'导入操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000024, 7, N'强退', N'7', N'sys_oper_type', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'强退操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000025, 8, N'生成代码', N'8', N'sys_oper_type', N'', N'warning', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'生成操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000026, 9, N'清空数据', N'9', N'sys_oper_type', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'清空操作')
+GO
+INSERT sys_dict_data VALUES (1761600000000000027, 1, N'成功', N'0', N'sys_common_status', N'', N'primary', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'正常状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000028, 2, N'失败', N'1', N'sys_common_status', N'', N'danger', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'停用状态')
+GO
+INSERT sys_dict_data VALUES (1761600000000000030, 0, N'密码认证', N'password', N'sys_grant_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'密码认证')
+GO
+INSERT sys_dict_data VALUES (1761600000000000031, 0, N'短信认证', N'sms', N'sys_grant_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'短信认证')
+GO
+INSERT sys_dict_data VALUES (1761600000000000032, 0, N'邮件认证', N'email', N'sys_grant_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'邮件认证')
+GO
+INSERT sys_dict_data VALUES (1761600000000000033, 0, N'小程序认证', N'xcx', N'sys_grant_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'小程序认证')
+GO
+INSERT sys_dict_data VALUES (1761600000000000034, 0, N'三方登录认证', N'social', N'sys_grant_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'三方登录认证')
+GO
+INSERT sys_dict_data VALUES (1761600000000000035, 0, N'PC', N'pc', N'sys_device_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'PC')
+GO
+INSERT sys_dict_data VALUES (1761600000000000036, 0, N'安卓', N'android', N'sys_device_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'安卓')
+GO
+INSERT sys_dict_data VALUES (1761600000000000037, 0, N'iOS', N'ios', N'sys_device_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'iOS')
+GO
+INSERT sys_dict_data VALUES (1761600000000000038, 0, N'小程序', N'xcx', N'sys_device_type', N'', N'default', N'N', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'小程序')
+GO
+
+CREATE TABLE sys_dict_type
+(
+    dict_id     bigint                      NOT NULL,
+    dict_name   nvarchar(100) DEFAULT ''    NULL,
+    dict_type   nvarchar(100) DEFAULT ''    NULL,
+    create_dept bigint                      NULL,
+    create_by   bigint                      NULL,
+    create_time datetime2(7)                NULL,
+    update_by   bigint                      NULL,
+    update_time datetime2(7)                NULL,
+    remark      nvarchar(500)               NULL,
+    CONSTRAINT PK__sys_dict__3BD4186C409C5391 PRIMARY KEY CLUSTERED (dict_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX sys_dict_type_index1 ON sys_dict_type (dict_type)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典主键' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'dict_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'dict_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'dict_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'字典类型表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_dict_type'
+GO
+
+INSERT sys_dict_type VALUES (1761500000000000001, N'用户性别', N'sys_user_gender', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'用户性别列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000002, N'菜单状态', N'sys_show_hide', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'菜单状态列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000003, N'系统开关', N'sys_normal_disable', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统开关列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000004, N'任务状态', N'sys_job_status', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'任务状态列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000005, N'任务分组', N'sys_job_group', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'任务分组列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000006, N'系统是否', N'sys_yes_no', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统是否列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000007, N'通知类型', N'sys_notice_type', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'通知类型列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000008, N'通知状态', N'sys_notice_status', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'通知状态列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000009, N'操作类型', N'sys_oper_type', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'操作类型列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000010, N'系统状态', N'sys_common_status', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'登录状态列表')
+GO
+INSERT sys_dict_type VALUES (1761500000000000011, N'授权类型', N'sys_grant_type', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'认证授权类型')
+GO
+INSERT sys_dict_type VALUES (1761500000000000012, N'设备类型', N'sys_device_type', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'客户端设备类型')
+GO
+
+CREATE TABLE sys_login_info
+(
+    info_id        bigint                      NOT NULL,
+    user_name      nvarchar(50)  DEFAULT ''    NULL,
+    client_key     nvarchar(32)  DEFAULT ''    NULL,
+    device_type    nvarchar(32)  DEFAULT ''    NULL,
+    ipaddr         nvarchar(128) DEFAULT ''    NULL,
+    login_location nvarchar(255) DEFAULT ''    NULL,
+    browser        nvarchar(50)  DEFAULT ''    NULL,
+    os             nvarchar(50)  DEFAULT ''    NULL,
+    status         nchar(1)      DEFAULT ('0') NULL,
+    msg            nvarchar(255) DEFAULT ''    NULL,
+    login_time     datetime2(7)                NULL,
+    CONSTRAINT PK__sys_logi__3D8A9C1A1854AE10 PRIMARY KEY CLUSTERED (info_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_login_info_s ON sys_login_info (status)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_login_info_lt ON sys_login_info (login_time)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'访问ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'info_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户账号' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'user_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'客户端' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'client_key'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'设备类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'device_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'登录IP地址' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'ipaddr'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'登录地点' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'login_location'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'浏览器类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'browser'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作系统' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'os'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'登录状态（0正常 1异常）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'提示消息' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'msg'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'访问时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info',
+    'COLUMN', N'login_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'系统访问记录' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_login_info'
+GO
+
+CREATE TABLE sys_menu
+(
+    menu_id     bigint                      NOT NULL,
+    menu_name   nvarchar(50)                NOT NULL,
+    parent_id   bigint        DEFAULT ((0)) NULL,
+    order_num   int           DEFAULT ((0)) NULL,
+    path        nvarchar(200) DEFAULT ''    NULL,
+    component   nvarchar(255)               NULL,
+    query_param nvarchar(255)               NULL,
+    is_frame    nchar(1)      DEFAULT ('N') NULL,
+    is_cache    nchar(1)      DEFAULT ('Y') NULL,
+    menu_type   nchar(1)      DEFAULT ''    NULL,
+    visible     nchar(1)      DEFAULT ((0)) NULL,
+    status      nchar(1)      DEFAULT ((0)) NULL,
+    perms       nvarchar(100)               NULL,
+    icon        nvarchar(100) DEFAULT ('#') NULL,
+    active_menu nvarchar(255) DEFAULT ''    NULL,
+    ext         nvarchar(2000) DEFAULT ''   NULL,
+    create_dept bigint                      NULL,
+    create_by   bigint                      NULL,
+    create_time datetime2(7)                NULL,
+    update_by   bigint                      NULL,
+    update_time datetime2(7)                NULL,
+    remark      nvarchar(500) DEFAULT ''    NULL,
+    CONSTRAINT PK__sys_menu__4CA0FADCF8545C58 PRIMARY KEY CLUSTERED (menu_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'menu_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'menu_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'父菜单ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'parent_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'显示顺序' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'order_num'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'路由地址' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'path'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'组件路径' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'component'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'路由参数' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'query_param'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否为外链（Y是 N否）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'is_frame'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'是否缓存（Y缓存 N不缓存）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'is_cache'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单类型（M目录 C菜单 F按钮）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'menu_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'显示状态（0显示 1隐藏）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'visible'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单状态（0正常 1停用）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'权限标识' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'perms'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单图标' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'icon'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'激活菜单路径' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'active_menu'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'扩展字段' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'ext'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单权限表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_menu'
+GO
+
+insert into sys_menu values(1761400000000000001, N'系统管理', 0, 1, N'system', NULL, N'', N'N', N'Y', N'M', N'0', N'0', N'', N'system', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统管理目录');
+GO
+insert into sys_menu values(1761400000000000002, N'系统监控', 0, 3, N'monitor', NULL, N'', N'N', N'Y', N'M', N'0', N'0', N'', N'monitor', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统监控目录');
+GO
+insert into sys_menu values(1761400000000000003, N'系统工具', 0, 4, N'tool', NULL, N'', N'N', N'Y', N'M', N'0', N'0', N'', N'tool', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'系统工具目录');
+GO
+insert into sys_menu values(1761400000000000005, N'测试菜单', 0, 5, N'demo', NULL, N'', N'N', N'Y', N'M', N'0', N'0', NULL, N'star', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000000006, N'AI会话',  0, 8, N'aichat', N'ai/chat/index', N'', N'N', N'Y', N'C', N'0', N'0', N'', N'checkbox', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'AI聊天菜单');
+GO
+insert into sys_menu values(1761400000000000004, N'PLUS官网', 0, 9, N'https://gitee.com/dromara/NHS-Vue-Plus', null, N'', N'Y', N'Y', N'M', N'0', N'0', N'', N'guide', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), null, null, N'NHS-Vue-Plus官网地址');
+GO
+insert into sys_menu values(1761400000000000100, N'用户管理', 1761400000000000001, 1, N'user', N'system/user/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:user:list', N'user', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'用户管理菜单');
+GO
+insert into sys_menu values(1761400000000000101, N'角色管理', 1761400000000000001, 2, N'role', N'system/role/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:role:list', N'peoples', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'角色管理菜单');
+GO
+insert into sys_menu values(1761400000000000102, N'菜单管理', 1761400000000000001, 3, N'menu', N'system/menu/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:menu:list', N'tree-table', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'菜单管理菜单');
+GO
+insert into sys_menu values(1761400000000000103, N'部门管理', 1761400000000000001, 4, N'dept', N'system/dept/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:dept:list', N'tree', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'部门管理菜单');
+GO
+insert into sys_menu values(1761400000000000104, N'岗位管理', 1761400000000000001, 5, N'post', N'system/post/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:post:list', N'post', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'岗位管理菜单');
+GO
+insert into sys_menu values(1761400000000000105, N'字典管理', 1761400000000000001, 6, N'dict', N'system/dict/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:dict:list', N'dict', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'字典管理菜单');
+GO
+insert into sys_menu values(1761400000000000106, N'参数设置', 1761400000000000001, 7, N'config', N'system/config/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:config:list', N'edit', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'参数设置菜单');
+GO
+insert into sys_menu values(1761400000000000107, N'通知公告', 1761400000000000001, 8, N'notice', N'system/notice/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:notice:list', N'message', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'通知公告菜单');
+GO
+insert into sys_menu values(1761400000000000108, N'日志管理', 1761400000000000001, 9, N'log', N'', N'', N'N', N'Y', N'M', N'0', N'0', N'', N'log', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'日志管理菜单');
+GO
+insert into sys_menu values(1761400000000000109, N'在线用户', 1761400000000000002, 1, N'online', N'monitor/online/index', N'', N'N', N'Y', N'C', N'0', N'0', N'monitor:online:list', N'online', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'在线用户菜单');
+GO
+insert into sys_menu values(1761400000000000113, N'缓存监控', 1761400000000000002, 5, N'cache', N'monitor/cache/index', N'', N'N', N'Y', N'C', N'0', N'0', N'monitor:cache:list', N'redis', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'缓存监控菜单');
+GO
+insert into sys_menu values(1761400000000000115, N'代码生成', 1761400000000000003, 2, N'gen', N'tool/gen/index', N'', N'N', N'Y', N'C', N'0', N'0', N'tool:gen:list', N'code', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'代码生成菜单');
+GO
+insert into sys_menu values(1761400000000000123, N'客户端管理', 1761400000000000001, 11, N'client', N'system/client/index', N'', N'N', N'Y', N'C', N'0', N'0', N'system:client:list', N'international', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'客户端管理菜单');
+GO
+insert into sys_menu values(1761400000000000116, N'修改生成配置', 1761400000000000003, 2, N'gen-edit/index/:tableId', N'tool/gen/editTable', N'', N'N', N'N', N'C', N'1', N'0', N'tool:gen:edit', N'#', N'/tool/gen', N'', 1761000000000000103, 1761100000000000001, getdate(), null, null, N'');
+GO
+insert into sys_menu values(1761400000000000130, N'分配用户', 1761400000000000001, 2, N'role-auth/user/:roleId', N'system/role/authUser', N'', N'N', N'N', N'C', N'1', N'0', N'system:role:edit', N'#', N'/system/role', N'', 1761000000000000103, 1761100000000000001, getdate(), null, null, N'');
+GO
+insert into sys_menu values(1761400000000000131, N'分配角色', 1761400000000000001, 1, N'user-auth/role/:userId', N'system/user/authRole', N'', N'N', N'N', N'C', N'1', N'0', N'system:user:edit', N'#', N'/system/user', N'', 1761000000000000103, 1761100000000000001, getdate(), null, null, N'');
+GO
+insert into sys_menu values(1761400000000000133, N'文件配置管理', 1761400000000000001, 10, N'oss-config/index', N'system/oss/config', N'', N'N', N'N', N'C', N'1', N'0', N'system:ossConfig:list', N'#', N'/system/oss', N'', 1761000000000000103, 1761100000000000001, getdate(), null, null, N'');
+GO
+
+insert into sys_menu values(1761400000000000117, N'Admin监控', 1761400000000000002, 5, N'Admin', N'monitor/admin/index', N'', N'N', N'Y', N'C', N'0', N'0', N'monitor:admin:list', N'dashboard', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'Admin监控菜单');
+GO
+insert into sys_menu values(1761400000000000118, N'文件管理', 1761400000000000001, 10, N'oss', N'system/oss/index', N'', N'N', N'Y', N'C', '0', N'0', N'system:oss:list', N'upload', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'文件管理菜单');
+GO
+insert into sys_menu values(1761400000000000120, N'任务调度中心', 1761400000000000002, 5, N'snailjob', N'monitor/snailjob/index', N'', N'N', N'Y', N'C', N'0', N'0', N'monitor:snailjob:list', N'job', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'SnailJob控制台菜单');
+GO
+insert into sys_menu values(1761400000000000121, N'AI控制台', 1761400000000000002, 7, N'snailai', N'monitor/snailai/index', N'', N'N', N'Y', N'C', N'0', N'0', N'monitor:snailai:list', N'checkbox', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'AI控制台菜单');
+GO
+insert into sys_menu values(1761400000000000500, N'操作日志', 1761400000000000108, 1, N'operlog', N'monitor/operlog/index', N'', N'N', N'Y', N'C', N'0', N'0', N'monitor:operlog:list', N'form', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'操作日志菜单');
+GO
+insert into sys_menu values(1761400000000000501, N'登录日志', 1761400000000000108, 2, N'logininfo', N'monitor/logininfo/index', N'', N'N', N'Y', N'C', N'0', N'0', N'monitor:logininfo:list', N'logininfo', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'登录日志菜单');
+GO
+insert into sys_menu values(1761400000000001001, N'用户查询', 1761400000000000100, 1, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:user:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001002, N'用户新增', 1761400000000000100, 2, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:user:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001003, N'用户修改', 1761400000000000100, 3, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:user:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001004, N'用户删除', 1761400000000000100, 4, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:user:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001005, N'用户导出', 1761400000000000100, 5, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:user:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001006, N'用户导入', 1761400000000000100, 6, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:user:import', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001007, N'重置密码', 1761400000000000100, 7, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:user:resetPwd', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001008, N'角色查询', 1761400000000000101, 1, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:role:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001009, N'角色新增', 1761400000000000101, 2, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:role:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001010, N'角色修改', 1761400000000000101, 3, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:role:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001011, N'角色删除', 1761400000000000101, 4, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:role:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001012, N'角色导出', 1761400000000000101, 5, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:role:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001013, N'菜单查询', 1761400000000000102, 1, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:menu:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001014, N'菜单新增', 1761400000000000102, 2, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:menu:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001015, N'菜单修改', 1761400000000000102, 3, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:menu:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001016, N'菜单删除', 1761400000000000102, 4, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:menu:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001017, N'部门查询', 1761400000000000103, 1, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dept:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001018, N'部门新增', 1761400000000000103, 2, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dept:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001019, N'部门修改', 1761400000000000103, 3, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dept:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001020, N'部门删除', 1761400000000000103, 4, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dept:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001021, N'岗位查询', 1761400000000000104, 1, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:post:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001022, N'岗位新增', 1761400000000000104, 2, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:post:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001023, N'岗位修改', 1761400000000000104, 3, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:post:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001024, N'岗位删除', 1761400000000000104, 4, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:post:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001025, N'岗位导出', 1761400000000000104, 5, N'', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:post:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001026, N'字典查询', 1761400000000000105, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dict:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001027, N'字典新增', 1761400000000000105, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dict:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001028, N'字典修改', 1761400000000000105, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dict:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001029, N'字典删除', 1761400000000000105, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dict:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001030, N'字典导出', 1761400000000000105, 5, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:dict:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001031, N'参数查询', 1761400000000000106, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:config:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001032, N'参数新增', 1761400000000000106, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:config:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001033, N'参数修改', 1761400000000000106, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:config:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001034, N'参数删除', 1761400000000000106, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:config:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001035, N'参数导出', 1761400000000000106, 5, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:config:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001036, N'公告查询', 1761400000000000107, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:notice:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001037, N'公告新增', 1761400000000000107, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:notice:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001038, N'公告修改', 1761400000000000107, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:notice:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001039, N'公告删除', 1761400000000000107, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:notice:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001040, N'操作查询', 1761400000000000500, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:operlog:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001041, N'操作删除', 1761400000000000500, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:operlog:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001042, N'日志导出', 1761400000000000500, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:operlog:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001043, N'登录查询', 1761400000000000501, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:logininfo:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001044, N'登录删除', 1761400000000000501, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:logininfo:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001045, N'日志导出', 1761400000000000501, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:logininfo:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001050, N'账户解锁', 1761400000000000501, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:logininfo:unlock', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001046, N'在线查询', 1761400000000000109, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:online:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001047, N'批量强退', 1761400000000000109, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:online:batchLogout', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001048, N'单条强退', 1761400000000000109, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'monitor:online:forceLogout', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001055, N'生成查询', 1761400000000000115, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'tool:gen:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001056, N'生成修改', 1761400000000000115, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'tool:gen:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001057, N'生成删除', 1761400000000000115, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'tool:gen:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001058, N'导入代码', 1761400000000000115, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'tool:gen:import', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001059, N'预览代码', 1761400000000000115, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'tool:gen:preview', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001060, N'生成代码', 1761400000000000115, 5, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'tool:gen:code', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+-- oss相关按钮
+insert into sys_menu values(1761400000000001600, N'文件查询', 1761400000000000118, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:oss:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001601, N'文件上传', 1761400000000000118, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:oss:upload', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001602, N'文件下载', 1761400000000000118, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:oss:download', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001603, N'文件删除', 1761400000000000118, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:oss:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001620, N'配置列表', 1761400000000000118, 5, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:ossConfig:list', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001621, N'配置添加', 1761400000000000118, 6, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:ossConfig:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001622, N'配置编辑', 1761400000000000118, 6, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:ossConfig:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001623, N'配置删除', 1761400000000000118, 6, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:ossConfig:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+-- 客户端管理按钮
+insert into sys_menu values(1761400000000001061, N'客户端管理查询', 1761400000000000123, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:client:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001062, N'客户端管理新增', 1761400000000000123, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:client:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001063, N'客户端管理修改', 1761400000000000123, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:client:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001064, N'客户端管理删除', 1761400000000000123, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:client:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001065, N'客户端管理导出', 1761400000000000123, 5, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'system:client:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+-- 测试菜单
+insert into sys_menu values(1761400000000001500, N'测试单表', 1761400000000000005, 1, N'demo', N'demo/demo/index', N'', N'N', N'Y', N'C', N'0', N'0', N'demo:demo:list', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'测试单表菜单');
+GO
+insert into sys_menu values(1761400000000001501, N'测试单表查询', 1761400000000001500, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:demo:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001502, N'测试单表新增', 1761400000000001500, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:demo:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001503, N'测试单表修改', 1761400000000001500, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:demo:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001504, N'测试单表删除', 1761400000000001500, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:demo:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001505, N'测试单表导出', 1761400000000001500, 5, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:demo:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+
+insert into sys_menu values(1761400000000001506, N'测试树表', 1761400000000000005, 1, N'tree', N'demo/tree/index', N'', N'N', N'Y', N'C', N'0', N'0', N'demo:tree:list', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'测试树表菜单');
+GO
+insert into sys_menu values(1761400000000001507, N'测试树表查询', 1761400000000001506, 1, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:tree:query', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001508, N'测试树表新增', 1761400000000001506, 2, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:tree:add', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001509, N'测试树表修改', 1761400000000001506, 3, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:tree:edit', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001510, N'测试树表删除', 1761400000000001506, 4, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:tree:remove', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+insert into sys_menu values(1761400000000001511, N'测试树表导出', 1761400000000001506, 5, N'#', N'', N'', N'N', N'Y', N'F', N'0', N'0', N'demo:tree:export', N'#', N'', N'', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+
+CREATE TABLE sys_notice
+(
+    notice_id      bigint                     NOT NULL,
+    notice_title   nvarchar(50)               NOT NULL,
+    notice_type    nchar(1)                   NOT NULL,
+    notice_content nvarchar(max)              NULL,
+    status         nchar(1)     DEFAULT ('0') NULL,
+    create_dept    bigint                     NULL,
+    create_by      bigint                     NULL,
+    create_time    datetime2(7)               NULL,
+    update_by      bigint                     NULL,
+    update_time    datetime2(7)               NULL,
+    remark         nvarchar(255)              NULL,
+    CONSTRAINT PK__sys_noti__3E82A5DB0EC94801 PRIMARY KEY CLUSTERED (notice_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+TEXTIMAGE_ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'公告ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'notice_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'公告标题' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'notice_title'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'公告类型（1通知 2公告）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'notice_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'公告内容' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'notice_content'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'公告状态（0正常 1关闭）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'通知公告表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_notice'
+GO
+
+INSERT sys_notice VALUES (1761800000000000001, N'温馨提醒：2018-07-01 若依新版本发布啦', N'2', N'新版本内容', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'管理员')
+GO
+INSERT sys_notice VALUES (1761800000000000002, N'维护通知：2018-07-01 若依系统凌晨维护', N'1', N'维护内容', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'管理员')
+GO
+
+CREATE TABLE sys_message
+(
+    message_id    bigint                        NOT NULL,
+    category      nvarchar(20)                  NOT NULL,
+    type          nvarchar(20)                  NOT NULL,
+    source        nvarchar(20)                  NOT NULL,
+    title         nvarchar(100)   DEFAULT ('')  NULL,
+    message       nvarchar(500)   DEFAULT ('')  NULL,
+    content       nvarchar(max)                 NULL,
+    data_json     nvarchar(max)                 NULL,
+    path          nvarchar(500)                 NULL,
+    send_user_ids nvarchar(2000)  DEFAULT ('0') NOT NULL,
+    create_dept   bigint                        NULL,
+    create_by     bigint                        NULL,
+    create_time   datetime2(7)                  NULL,
+    update_by     bigint                        NULL,
+    update_time   datetime2(7)                  NULL,
+    CONSTRAINT PK__sys_mess__0BBF6EE69F35486A PRIMARY KEY CLUSTERED (message_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+TEXTIMAGE_ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_message_category_time ON sys_message(category, create_time)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'消息ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'message_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'消息分组(system/notice/workflow)' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'category'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'消息类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'消息来源' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'source'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'标题' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'title'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'摘要消息' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'message'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'详细内容' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'content'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'扩展数据JSON' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'data_json'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'前端跳转路径' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'path'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'目标用户ID串，0表示全局' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'send_user_ids'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'消息记录表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_message'
+GO
+
+CREATE TABLE sys_oper_log
+(
+    oper_id        bigint                       NOT NULL,
+    title          nvarchar(50)   DEFAULT ''    NULL,
+    business_type  int            DEFAULT ((0)) NULL,
+    method         nvarchar(100)  DEFAULT ''    NULL,
+    request_method nvarchar(10)   DEFAULT ''    NULL,
+    operator_type  int            DEFAULT ((0)) NULL,
+    oper_name      nvarchar(50)   DEFAULT ''    NULL,
+    user_id        bigint                       NULL,
+    dept_id        bigint                       NULL,
+    dept_name      nvarchar(50)   DEFAULT ''    NULL,
+    client_key     nvarchar(32)   DEFAULT ''    NULL,
+    device_type    nvarchar(32)   DEFAULT ''    NULL,
+    browser        nvarchar(50)   DEFAULT ''    NULL,
+    os             nvarchar(50)   DEFAULT ''    NULL,
+    oper_url       nvarchar(255)  DEFAULT ''    NULL,
+    oper_ip        nvarchar(128)  DEFAULT ''    NULL,
+    oper_location  nvarchar(255)  DEFAULT ''    NULL,
+    oper_param     nvarchar(4000) DEFAULT ''    NULL,
+    json_result    nvarchar(4000) DEFAULT ''    NULL,
+    status         int            DEFAULT ((0)) NULL,
+    error_msg      nvarchar(4000) DEFAULT ''    NULL,
+    oper_time      datetime2(7)                 NULL,
+    cost_time      bigint         DEFAULT ((0)) NULL,
+    CONSTRAINT PK__sys_oper__34723BF9BD954573 PRIMARY KEY CLUSTERED (oper_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_oper_log_bt ON sys_oper_log (business_type)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_oper_log_uid ON sys_oper_log (user_id)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_oper_log_s ON sys_oper_log (status)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_oper_log_ot ON sys_oper_log (oper_time)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'日志主键' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'oper_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'模块标题' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'title'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'业务类型（0其它 1新增 2修改 3删除）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'business_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'方法名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'method'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'请求方式' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'request_method'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作类别（0其它 1后台用户 2手机端用户）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'operator_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作人员' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'oper_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作用户ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'user_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作部门ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'dept_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'dept_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'客户端' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'client_key'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'设备类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'device_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'浏览器类型' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'browser'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作系统' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'os'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'请求URL' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'oper_url'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'主机地址' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'oper_ip'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作地点' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'oper_location'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'请求参数' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'oper_param'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'返回参数' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'json_result'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作状态（0正常 1异常）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'错误消息' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'error_msg'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'oper_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'消耗时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log',
+    'COLUMN', N'cost_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'操作日志记录' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oper_log'
+GO
+
+CREATE TABLE sys_post
+(
+    post_id     bigint                          NOT NULL,
+    dept_id     bigint                          NOT NULL,
+    post_code   nvarchar(64)                    NOT NULL,
+    post_category nvarchar(100)                 NULL,
+    post_name   nvarchar(50)                    NOT NULL,
+    post_sort   int                             NOT NULL,
+    status      nchar(1)                        NOT NULL,
+    del_flag    nchar(1)     DEFAULT ('0')      NULL,
+    create_dept bigint                          NULL,
+    create_by   bigint                          NULL,
+    create_time datetime2(7)                    NULL,
+    update_by   bigint                          NULL,
+    update_time datetime2(7)                    NULL,
+    remark      nvarchar(500)                   NULL,
+    CONSTRAINT PK__sys_post__3ED7876668E2D081 PRIMARY KEY CLUSTERED (post_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_post_dept_id ON sys_post (dept_id)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'岗位ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'post_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门id' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'dept_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'岗位编码' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'post_code'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'岗位类别编码' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'post_category'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'岗位名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'post_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'显示顺序' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'post_sort'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'状态（0正常 1停用）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'删除标志（0代表存在 1代表删除）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'del_flag'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'岗位信息表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_post'
+GO
+
+INSERT sys_post VALUES (1761200000000000001, 1761000000000000103, N'ceo', NULL, N'董事长', 1, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'')
+GO
+INSERT sys_post VALUES (1761200000000000002, 1761000000000000100, N'se', NULL, N'项目经理', 2, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'')
+GO
+INSERT sys_post VALUES (1761200000000000003, 1761000000000000100, N'hr', NULL, N'人力资源', 3, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'')
+GO
+INSERT sys_post VALUES (1761200000000000004, 1761000000000000100, N'user', NULL, N'普通员工', 4, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'')
+GO
+
+CREATE TABLE sys_role
+(
+    role_id             bigint                     NOT NULL,
+    role_name           nvarchar(30)               NOT NULL,
+    role_key            nvarchar(100)              NOT NULL,
+    role_sort           int                        NOT NULL,
+    data_scope          nchar(1)     DEFAULT ('1') NULL,
+    menu_check_strictly tinyint      DEFAULT ((1)) NULL,
+    dept_check_strictly tinyint      DEFAULT ((1)) NULL,
+    status              nchar(1)                   NOT NULL,
+    del_flag            nchar(1)     DEFAULT ('0') NULL,
+    create_dept         bigint                     NULL,
+    create_by           bigint                     NULL,
+    create_time         datetime2(7)               NULL,
+    update_by           bigint                     NULL,
+    update_time         datetime2(7)               NULL,
+    remark              nvarchar(500)              NULL,
+    CONSTRAINT PK__sys_role__760965CCF9383145 PRIMARY KEY CLUSTERED (role_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_role_create_dept ON sys_role (create_dept)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_role_create_by ON sys_role (create_by)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'role_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色名称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'role_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色权限字符串' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'role_key'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'显示顺序' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'role_sort'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限 5：仅本人数据权限 6：部门及以下或本人数据权限）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'data_scope'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单树选择项是否关联显示' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'menu_check_strictly'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门树选择项是否关联显示' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'dept_check_strictly'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色状态（0正常 1停用）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'删除标志（0代表存在 1代表删除）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'del_flag'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色信息表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role'
+GO
+
+INSERT sys_role VALUES (1761300000000000001, N'超级管理员', N'superadmin', 1, N'1', 1, 1, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'超级管理员')
+GO
+INSERT sys_role VALUES (1761300000000000003, N'本部门及以下', N'test1', 3, N'4', 1, 1, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+INSERT sys_role VALUES (1761300000000000004, N'仅本人', N'test2', 4, N'5', 1, 1, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'');
+GO
+
+CREATE TABLE sys_role_dept
+(
+    role_id bigint NOT NULL,
+    dept_id bigint NOT NULL,
+    CONSTRAINT PK__sys_role__2BC3005BABBCA08A PRIMARY KEY CLUSTERED (role_id, dept_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role_dept',
+    'COLUMN', N'role_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role_dept',
+    'COLUMN', N'dept_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色和部门关联表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role_dept'
+GO
+
+CREATE TABLE sys_role_menu
+(
+    role_id bigint NOT NULL,
+    menu_id bigint NOT NULL,
+    CONSTRAINT PK__sys_role__A2C36A6187BA4B17 PRIMARY KEY CLUSTERED (role_id, menu_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role_menu',
+    'COLUMN', N'role_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'菜单ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role_menu',
+    'COLUMN', N'menu_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色和菜单关联表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_role_menu'
+GO
+
+-- ----------------------------
+-- 初始化-角色和菜单关联表数据
+-- ----------------------------
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000001);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000005);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000100);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000101);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000102);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000103);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000104);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000105);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000106);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000107);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000108);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000118);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000123);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000130);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000131);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000133);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000500);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000000501);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001001);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001002);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001003);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001004);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001005);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001006);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001007);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001008);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001009);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001010);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001011);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001012);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001013);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001014);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001015);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001016);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001017);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001018);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001019);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001020);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001021);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001022);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001023);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001024);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001025);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001026);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001027);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001028);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001029);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001030);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001031);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001032);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001033);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001034);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001035);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001036);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001037);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001038);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001039);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001040);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001041);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001042);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001043);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001044);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001045);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001050);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001061);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001062);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001063);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001064);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001065);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001500);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001501);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001502);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001503);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001504);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001505);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001506);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001507);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001508);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001509);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001510);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001511);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001600);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001601);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001602);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001603);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001620);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001621);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001622);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000001623);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011616);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011618);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011619);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011622);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011623);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011629);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011632);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011633);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011638);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011639);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011640);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011641);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011642);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011643);
+GO
+INSERT sys_role_menu VALUES (1761300000000000003, 1761400000000011701);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000000005);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001500);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001501);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001502);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001503);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001504);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001505);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001506);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001507);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001508);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001509);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001510);
+GO
+INSERT sys_role_menu VALUES (1761300000000000004, 1761400000000001511);
+GO
+
+CREATE TABLE sys_user
+(
+    user_id     bigint                             NOT NULL,
+    dept_id     bigint                             NULL,
+    user_name   nvarchar(30)                       NOT NULL,
+    nick_name   nvarchar(30)                       NOT NULL,
+    user_type   nvarchar(10)  DEFAULT ('sys_user') NULL,
+    email       nvarchar(50)  DEFAULT ''           NULL,
+    phone_number nvarchar(11) DEFAULT ''           NULL,
+    gender      nchar(1)      DEFAULT ('0')        NULL,
+    avatar      bigint                             NULL,
+    password    nvarchar(100) DEFAULT ''           NULL,
+    status      nchar(1)      DEFAULT ('0')        NULL,
+    del_flag    nchar(1)      DEFAULT ('0')        NULL,
+    login_ip    nvarchar(128) DEFAULT ''           NULL,
+    login_date  datetime2(7)                       NULL,
+    create_dept bigint                             NULL,
+    create_by   bigint                             NULL,
+    create_time datetime2(7)                       NULL,
+    update_by   bigint                             NULL,
+    update_time datetime2(7)                       NULL,
+    remark      nvarchar(500)                      NULL,
+    CONSTRAINT PK__sys_user__B9BE370F79170B6A PRIMARY KEY CLUSTERED (user_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_user_dept_id ON sys_user (dept_id)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_user_create_by ON sys_user (create_by)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_user_user_name ON sys_user (user_name)
+GO
+CREATE NONCLUSTERED INDEX idx_sys_user_phone ON sys_user (phone_number)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'user_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'部门ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'dept_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户账号' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'user_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户昵称' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'nick_name'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户类型（sys_user系统用户）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'user_type'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户邮箱' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'email'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'手机号码' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'phone_number'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户性别（0男 1女 2未知）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'gender'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'头像地址' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'avatar'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'密码' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'password'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'账号状态（0正常 1停用）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'status'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'删除标志（0代表存在 1代表删除）' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'del_flag'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'最后登录IP' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'login_ip'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'最后登录时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'login_date'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'create_dept'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'create_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'create_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新者' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'update_by'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'更新时间' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'update_time'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'备注' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user',
+    'COLUMN', N'remark'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户信息表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user'
+GO
+
+INSERT sys_user VALUES (1761100000000000001, 1761000000000000103, N'admin', N'疯狂的狮子Li', N'sys_user', N'crazyLionLi@163.com', N'15888888888', N'1', NULL, N'$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2', N'0', N'0', N'127.0.0.1', getdate(), 1761000000000000103, 1761100000000000001, getdate(), NULL, NULL, N'管理员')
+GO
+INSERT sys_user VALUES (1761100000000000003, 1761000000000000108, N'test', N'本部门及以下 密码666666', N'sys_user', N'', N'', N'0', NULL, N'$2a$10$b8yUzN0C71sbz.PhNOCgJe.Tu1yWC3RNrTyjSQ8p1W0.aaUXUJ.Ne', N'0', N'0', N'127.0.0.1', getdate(), 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000003, getdate(), NULL);
+GO
+INSERT sys_user VALUES (1761100000000000004, 1761000000000000102, N'test1', N'仅本人 密码666666', N'sys_user', N'', N'', N'0', NULL, N'$2a$10$b8yUzN0C71sbz.PhNOCgJe.Tu1yWC3RNrTyjSQ8p1W0.aaUXUJ.Ne', N'0', N'0', N'127.0.0.1', getdate(), 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000004, getdate(), NULL);
+GO
+
+CREATE TABLE sys_user_post
+(
+    user_id bigint NOT NULL,
+    post_id bigint NOT NULL,
+    CONSTRAINT PK__sys_user__CA534F799C04589B PRIMARY KEY CLUSTERED (user_id, post_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user_post',
+    'COLUMN', N'user_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'岗位ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user_post',
+    'COLUMN', N'post_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户与岗位关联表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user_post'
+GO
+
+INSERT sys_user_post VALUES (1761100000000000001, 1761200000000000001)
+GO
+
+CREATE TABLE sys_user_role
+(
+    user_id bigint NOT NULL,
+    role_id bigint NOT NULL,
+    CONSTRAINT PK__sys_user__6EDEA153FB34D8F0 PRIMARY KEY CLUSTERED (user_id, role_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+CREATE NONCLUSTERED INDEX idx_sys_user_role_rid ON sys_user_role (role_id)
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user_role',
+    'COLUMN', N'user_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'角色ID' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user_role',
+    'COLUMN', N'role_id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'用户和角色关联表' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_user_role'
+GO
+
+INSERT sys_user_role VALUES (1761100000000000001, 1761300000000000001)
+GO
+INSERT sys_user_role VALUES (1761100000000000003, 1761300000000000003);
+GO
+INSERT sys_user_role VALUES (1761100000000000004, 1761300000000000004);
+GO
+
+CREATE TABLE sys_oss
+(
+    oss_id        bigint                          NOT NULL,
+    file_name     nvarchar(255) DEFAULT ''        NOT NULL,
+    original_name nvarchar(255) DEFAULT ''        NOT NULL,
+    file_suffix   nvarchar(10)  DEFAULT ''        NOT NULL,
+    url           nvarchar(500)                   NOT NULL,
+    ext1          nvarchar(500) DEFAULT ''        NULL,
+    create_dept   bigint                          NULL,
+    create_time   datetime2(7)                    NULL,
+    create_by     bigint                          NULL,
+    update_time   datetime2(7)                    NULL,
+    update_by     bigint                          NULL,
+    service       nvarchar(20)  DEFAULT ('minio') NOT NULL,
+    CONSTRAINT PK__sys_oss__91241EA442389F0D PRIMARY KEY CLUSTERED (oss_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'对象存储主键',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'oss_id'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'文件名',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'file_name'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'原名',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'original_name'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'文件后缀名',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'file_suffix'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'URL地址',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'url'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'扩展字段',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'ext1'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'create_dept'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'create_time'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'上传人',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'create_by'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'update_time'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新人',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'update_by'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'服务商',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'service'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'OSS对象存储表',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss'
+GO
+
+CREATE TABLE sys_oss_config
+(
+    oss_config_id bigint                      NOT NULL,
+    config_key    nvarchar(20)  DEFAULT ''    NOT NULL,
+    access_key    nvarchar(255) DEFAULT ''    NULL,
+    secret_key    nvarchar(255) DEFAULT ''    NULL,
+    bucket_name   nvarchar(255) DEFAULT ''    NULL,
+    prefix        nvarchar(255) DEFAULT ''    NULL,
+    endpoint      nvarchar(255) DEFAULT ''    NULL,
+    domain_url    nvarchar(255) DEFAULT ''    NULL,
+    is_https      nchar(1)      DEFAULT ('N') NULL,
+    region        nvarchar(255) DEFAULT ''    NULL,
+    access_policy nchar(1)      DEFAULT ('1') NOT NULL,
+    status        nchar(1)      DEFAULT ('N') NULL,
+    ext1          nvarchar(255) DEFAULT ''    NULL,
+    create_dept   bigint                      NULL,
+    create_by     bigint                      NULL,
+    create_time   datetime2(7)                NULL,
+    update_by     bigint                      NULL,
+    update_time   datetime2(7)                NULL,
+    remark        nvarchar(500)               NULL,
+    CONSTRAINT PK__sys_oss___BFBDE87009ED2882 PRIMARY KEY CLUSTERED (oss_config_id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'主键',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'oss_config_id'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'配置key',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'config_key'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'accessKey',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'access_key'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'秘钥',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'secret_key'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'桶名称',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'bucket_name'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'前缀',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'prefix'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'访问站点',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'endpoint'
+GO
+EXEC sp_addextendedproperty
+     'MS_Description', N'自定义域名',
+     'SCHEMA', N'dbo',
+     'TABLE', N'sys_oss_config',
+     'COLUMN', N'domain_url'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'是否https（Y=是,N=否）',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'is_https'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'域',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'region'
+GO
+EXEC sp_addextendedproperty
+     'MS_Description', N'桶权限类型(0=private 1=public 2=custom)',
+     'SCHEMA', N'dbo',
+     'TABLE', N'sys_oss_config',
+     'COLUMN', N'access_policy'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'是否默认（Y=是,N=否）',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'status'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'扩展字段',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'ext1'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'create_dept'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建者',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'create_by'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'create_time'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新者',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'update_by'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'update_time'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'备注',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config',
+    'COLUMN', N'remark'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'对象存储配置表',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss_config'
+GO
+
+INSERT INTO sys_oss_config VALUES (1761900000000000001, N'minio', N'nhs', N'nhs123', N'nhs', N'', N'127.0.0.1:9000', N'', N'N', N'', N'1', N'Y', N'', 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000001, getdate(), NULL);
+GO
+INSERT INTO sys_oss_config VALUES (1761900000000000002, N'qiniu', N'XXXXXXXXXXXXXXXX', N'XXXXXXXXXXXXXXX', N'nhs', N'', N's3-cn-north-1.qiniucs.com', N'', N'N', N'', N'1', N'N', N'', 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000001, getdate(), NULL);
+GO
+INSERT INTO sys_oss_config VALUES (1761900000000000003, N'aliyun', N'XXXXXXXXXXXXXXX', N'XXXXXXXXXXXXXXX', N'nhs', N'', N'oss-cn-beijing.aliyuncs.com', N'', N'N', N'', N'1', N'N', N'', 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000001, getdate(), NULL);
+GO
+INSERT INTO sys_oss_config VALUES (1761900000000000004, N'qcloud', N'XXXXXXXXXXXXXXX', N'XXXXXXXXXXXXXXX', N'nhs-1250000000', N'', N'cos.ap-beijing.myqcloud.com', N'', N'N', N'ap-beijing', N'1', N'N', N'', 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000001, getdate(), NULL);
+GO
+INSERT INTO sys_oss_config VALUES (1761900000000000005, N'image', N'nhs', N'nhs123', N'nhs', N'image', N'127.0.0.1:9000', N'', N'N', N'', N'1', N'N', N'', 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000001, getdate(), NULL);
+GO
+
+
+CREATE TABLE sys_client
+(
+    id                  bigint                              NOT NULL,
+    client_id           nvarchar(64)  DEFAULT ''            NULL,
+    client_key          nvarchar(32) DEFAULT ''            NULL,
+    client_secret       nvarchar(255) DEFAULT ''            NULL,
+    grant_type          nvarchar(255) DEFAULT ''            NULL,
+    device_type         nvarchar(32) DEFAULT ''            NULL,
+    access_path         nvarchar(2000) DEFAULT ''           NULL,
+    ip_whitelist        nvarchar(1000) DEFAULT ''           NULL,
+    active_timeout      int           DEFAULT ((1800))      NULL,
+    timeout             int           DEFAULT ((604800))    NULL,
+    status              nchar(1)      DEFAULT ('0')         NULL,
+    del_flag            nchar(1)      DEFAULT ('0')         NULL,
+    create_dept         bigint                              NULL,
+    create_by           bigint                              NULL,
+    create_time         datetime2(7)                        NULL,
+    update_by           bigint                              NULL,
+    update_time         datetime2(7)                        NULL
+    CONSTRAINT PK__sys_client___BFBDE87009ED2882 PRIMARY KEY CLUSTERED (id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'主键',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'id'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'客户端id' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'client_id'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'客户端key',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'client_key'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'客户端秘钥',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'client_secret'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'授权类型',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'grant_type'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'设备类型',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'device_type'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'允许访问路径',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'access_path'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'IP白名单',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'ip_whitelist'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'token活跃超时时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'active_timeout'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'token固定超时',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'timeout'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'状态（0正常 1停用）',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'status'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'删除标志（0代表存在 1代表删除）',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'del_flag'
+GO
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'create_dept'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建者',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'create_by'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'create_time'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新者',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'update_by'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client',
+    'COLUMN', N'update_time'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'系统授权表',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_client'
+GO
+
+INSERT INTO sys_client VALUES (1762000000000000001, N'e5cd7e4891bf95d1d19206ce24a7b32e', N'pc', N'pc123', N'password,social', N'pc', N'', N'', 1800, 604800, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000001, getdate());
+GO
+INSERT INTO sys_client VALUES (1762000000000000002, N'428a8310cd442757ae699df5d894f051', N'app', N'app123', N'password,sms,social', N'android', N'/app/**', N'', 1800, 604800, N'0', N'0', 1761000000000000103, 1761100000000000001, getdate(), 1761100000000000001, getdate());
+GO
+
+CREATE TABLE test_demo
+(
+    id          bigint            NOT NULL,
+    dept_id     bigint            NULL,
+    user_id     bigint            NULL,
+    order_num   int DEFAULT ((0)) NULL,
+    test_key    nvarchar(255)     NULL,
+    value       nvarchar(255)     NULL,
+    version     int DEFAULT ((0)) NULL,
+    create_dept bigint            NULL,
+    create_time datetime2(0)      NULL,
+    create_by   bigint            NULL,
+    update_time datetime2(0)      NULL,
+    update_by   bigint            NULL,
+    del_flag    int DEFAULT ((0)) NULL,
+    CONSTRAINT PK__test_dem__3213E83F176051C8 PRIMARY KEY CLUSTERED (id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'主键',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'部门id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'dept_id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'用户id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'user_id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'排序号',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'order_num'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'key键',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'test_key'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'值',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'value'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'版本',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'version'
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'create_dept'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'create_time'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建人',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'update_time'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新人',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'update_by'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'删除标志',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo',
+    'COLUMN', N'del_flag'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'测试单表',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_demo'
+GO
+
+CREATE TABLE test_tree
+(
+    id          bigint               NOT NULL,
+    parent_id   bigint DEFAULT ((0)) NULL,
+    dept_id     bigint               NULL,
+    user_id     bigint               NULL,
+    tree_name   nvarchar(255)        NULL,
+    version     int    DEFAULT ((0)) NULL,
+    create_dept bigint               NULL,
+    create_time datetime2(0)         NULL,
+    create_by   bigint               NULL,
+    update_time datetime2(0)         NULL,
+    update_by   bigint               NULL,
+    del_flag    int    DEFAULT ((0)) NULL,
+    CONSTRAINT PK__test_tre__3213E83FC75A1B63 PRIMARY KEY CLUSTERED (id)
+        WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON)
+        ON [PRIMARY]
+)
+ON [PRIMARY]
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'主键',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'父id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'parent_id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'部门id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'dept_id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'用户id',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'user_id'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'值',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'tree_name'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'版本',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'version'
+GO
+
+EXEC sys.sp_addextendedproperty
+    'MS_Description', N'创建部门' ,
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'create_dept'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'create_time'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'创建人',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'create_by'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新时间',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'update_time'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'更新人',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'update_by'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'删除标志',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree',
+    'COLUMN', N'del_flag'
+GO
+
+EXEC sp_addextendedproperty
+    'MS_Description', N'测试树表',
+    'SCHEMA', N'dbo',
+    'TABLE', N'test_tree'
+GO
+
+INSERT test_demo VALUES (1762100000000000001, 1761000000000000102, 1761100000000000004, 1, N'测试数据权限', N'测试', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000002, 1761000000000000102, 1761100000000000003, 2, N'子节点1', N'111', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000003, 1761000000000000102, 1761100000000000003, 3, N'子节点2', N'222', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000004, 1761000000000000108, 1761100000000000004, 4, N'测试数据', N'demo', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000005, 1761000000000000108, 1761100000000000003, 13, N'子节点11', N'1111', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000006, 1761000000000000108, 1761100000000000003, 12, N'子节点22', N'2222', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000007, 1761000000000000108, 1761100000000000003, 11, N'子节点33', N'3333', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000008, 1761000000000000108, 1761100000000000003, 10, N'子节点44', N'4444', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000009, 1761000000000000108, 1761100000000000003, 9, N'子节点55', N'5555', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000010, 1761000000000000108, 1761100000000000003, 8, N'子节点66', N'6666', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000011, 1761000000000000108, 1761100000000000003, 7, N'子节点77', N'7777', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000012, 1761000000000000108, 1761100000000000003, 6, N'子节点88', N'8888', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_demo VALUES (1762100000000000013, 1761000000000000108, 1761100000000000003, 5, N'子节点99', N'9999', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+
+INSERT test_tree VALUES (1762200000000000001, NULL, 1761000000000000102, 1761100000000000004, N'测试数据权限', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000002, 1762200000000000001, 1761000000000000102, 1761100000000000003, N'子节点1', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000003, 1762200000000000002, 1761000000000000102, 1761100000000000003, N'子节点2', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000004, NULL, 1761000000000000108, 1761100000000000004, N'测试树1', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000005, 1762200000000000004, 1761000000000000108, 1761100000000000003, N'子节点11', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000006, 1762200000000000004, 1761000000000000108, 1761100000000000003, N'子节点22', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000007, 1762200000000000004, 1761000000000000108, 1761100000000000003, N'子节点33', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000008, 1762200000000000005, 1761000000000000108, 1761100000000000003, N'子节点44', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000009, 1762200000000000006, 1761000000000000108, 1761100000000000003, N'子节点55', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000010, 1762200000000000007, 1761000000000000108, 1761100000000000003, N'子节点66', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000011, 1762200000000000007, 1761000000000000108, 1761100000000000003, N'子节点77', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000012, 1762200000000000010, 1761000000000000108, 1761100000000000003, N'子节点88', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO
+INSERT test_tree VALUES (1762200000000000013, 1762200000000000010, 1761000000000000108, 1761100000000000003, N'子节点99', 0, 1761000000000000103, getdate(), 1761100000000000001, NULL, NULL, 0);
+GO

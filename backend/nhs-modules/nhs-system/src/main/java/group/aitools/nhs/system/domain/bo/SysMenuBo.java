@@ -1,0 +1,128 @@
+package group.aitools.nhs.system.domain.bo;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
+import group.aitools.nhs.common.core.constant.RegexConstants;
+import group.aitools.nhs.common.json.validate.JsonPattern;
+import group.aitools.nhs.common.json.validate.JsonType;
+import group.aitools.nhs.system.domain.SysMenu;
+
+import java.io.Serial;
+import java.io.Serializable;
+
+/**
+ * 菜单权限业务对象 sys_menu
+ *
+ * @author Michelle.Chung
+ */
+
+@Data
+@AutoMapper(target = SysMenu.class, reverseConvertGenerate = false)
+public class SysMenuBo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 菜单ID
+     */
+    private Long menuId;
+
+    /**
+     * 父菜单ID
+     */
+    private Long parentId;
+
+    /**
+     * 菜单名称
+     */
+    @NotBlank(message = "菜单名称不能为空")
+    @Size(min = 0, max = 50, message = "菜单名称长度不能超过{max}个字符")
+    private String menuName;
+
+    /**
+     * 显示顺序
+     */
+    @NotNull(message = "显示顺序不能为空")
+    private Integer orderNum;
+
+    /**
+     * 路由地址
+     */
+    @Size(min = 0, max = 200, message = "路由地址不能超过{max}个字符")
+    private String path;
+
+    /**
+     * 组件路径
+     */
+    @Size(min = 0, max = 200, message = "组件路径不能超过{max}个字符")
+    private String component;
+
+    /**
+     * 路由参数
+     */
+    @JsonPattern(type = JsonType.OBJECT, message = "路由参数必须符合JSON格式")
+    private String queryParam;
+
+    /**
+     * 是否为外链（Y是 N否）
+     */
+    private String isFrame;
+
+    /**
+     * 是否缓存（Y缓存 N不缓存）
+     */
+    private String isCache;
+
+    /**
+     * 菜单类型（M目录 C菜单 F按钮）
+     */
+    @NotBlank(message = "菜单类型不能为空")
+    private String menuType;
+
+    /**
+     * 显示状态（0显示 1隐藏）
+     */
+    private String visible;
+
+    /**
+     * 菜单状态（0正常 1停用）
+     */
+    private String status;
+
+    /**
+     * 权限标识
+     */
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Size(min = 0, max = 100, message = "权限标识长度不能超过{max}个字符")
+    @Pattern(regexp = RegexConstants.PERMISSION_STRING, message = "权限标识必须符合 tool:build:list 格式")
+    private String perms;
+
+    /**
+     * 菜单图标
+     */
+    private String icon;
+
+    /**
+     * 激活菜单路径
+     */
+    @Size(min = 0, max = 255, message = "激活菜单路径长度不能超过{max}个字符")
+    private String activeMenu;
+
+    /**
+     * 扩展字段
+     */
+    @Size(min = 0, max = 2000, message = "扩展字段长度不能超过{max}个字符")
+    private String ext;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
+}

@@ -1,0 +1,105 @@
+package ${packageName}.service;
+
+import ${packageName}.domain.vo.${ClassName}Vo;
+import ${packageName}.domain.bo.${ClassName}Bo;
+<#if table.crud>
+import group.aitools.nhs.common.core.domain.PageResult;
+import group.aitools.nhs.common.mybatis.core.page.PageQuery;
+</#if>
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * ${functionName}Service接口
+ *
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface I${ClassName}Service {
+
+    /**
+     * 查询${functionName}
+     *
+     * @param ${pkColumn.javaField} 主键
+     * @return ${functionName}
+     */
+    ${ClassName}Vo queryById(${pkColumn.javaType} ${pkColumn.javaField});
+
+<#if table.crud>
+    /**
+     * 分页查询${functionName}列表
+     *
+     * @param bo        查询条件
+     * @param pageQuery 分页参数
+     * @return ${functionName}分页列表
+     */
+    PageResult<${ClassName}Vo> queryPageList(${ClassName}Bo bo, PageQuery pageQuery);
+</#if>
+
+    /**
+     * 查询符合条件的${functionName}列表
+     *
+     * @param bo 查询条件
+     * @return ${functionName}列表
+     */
+    List<${ClassName}Vo> queryList(${ClassName}Bo bo);
+
+<#if enableUnique>
+    /**
+     * 校验${functionName}是否满足组合唯一约束
+     *
+     * @param bo ${functionName}
+     * @return 是否唯一
+     */
+    boolean checkUnique(${ClassName}Bo bo);
+</#if>
+
+    /**
+     * 新增${functionName}
+     *
+     * @param bo ${functionName}
+     * @return 是否新增成功
+     */
+    Boolean insertByBo(${ClassName}Bo bo);
+
+    /**
+     * 修改${functionName}
+     *
+     * @param bo ${functionName}
+     * @return 是否修改成功
+     */
+    Boolean updateByBo(${ClassName}Bo bo);
+
+<#if enableStatus>
+    /**
+     * 修改${functionName}状态
+     *
+     * @param ${pkColumn.javaField} 主键
+     * @param status 状态值
+     * @return 是否修改成功
+     */
+    Boolean updateStatus(${pkColumn.javaType} ${pkColumn.javaField}, ${statusColumn.javaType} status);
+</#if>
+
+<#if enableSort>
+    /**
+     * 调整${functionName}排序
+     *
+     * @param ${pkColumn.javaField} 主键
+     * @param sortValue 排序值
+     * @return 是否修改成功
+     */
+    Boolean updateSort(${pkColumn.javaType} ${pkColumn.javaField}, ${sortColumn.javaType} sortValue);
+</#if>
+
+    /**
+     * 校验并批量删除${functionName}信息
+     *
+     * @param ids     待删除的主键集合
+     * @param isValid 是否进行有效性校验
+     * @return 是否删除成功
+     */
+    Boolean deleteWithValidByIds(Collection<${pkColumn.javaType}> ids, Boolean isValid);
+
+}

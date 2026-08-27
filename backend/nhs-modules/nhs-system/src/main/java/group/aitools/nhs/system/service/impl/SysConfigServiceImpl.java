@@ -1,0 +1,270 @@
+package group.aitools.nhs.system.service.impl;
+
+import cn.hutool.core.convert.Convert;
+import cn.hutool.core.lang.Dict;
+import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.RequiredArgsConstructor;
+import group.aitools.nhs.common.core.constant.CacheNames;
+import group.aitools.nhs.common.core.constant.SystemConstants;
+import group.aitools.nhs.common.core.domain.PageResult;
+import group.aitools.nhs.common.core.exception.ServiceException;
+import group.aitools.nhs.common.core.utils.MapstructUtils;
+import group.aitools.nhs.common.core.utils.ObjectUtils;
+import group.aitools.nhs.common.core.utils.SpringUtils;
+import group.aitools.nhs.common.core.utils.StringUtils;
+import group.aitools.nhs.common.json.utils.JsonUtils;
+import group.aitools.nhs.common.mybatis.core.page.PageQuery;
+import group.aitools.nhs.common.mybatis.core.query.QueryBuilder;
+import group.aitools.nhs.common.redis.utils.CacheUtils;
+import group.aitools.nhs.system.api.ConfigService;
+import group.aitools.nhs.system.domain.SysConfig;
+import group.aitools.nhs.system.domain.bo.SysConfigBo;
+import group.aitools.nhs.system.domain.vo.SysConfigVo;
+import group.aitools.nhs.system.mapper.SysConfigMapper;
+import group.aitools.nhs.system.service.ISysConfigService;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 参数配置 服务层实现
+ *
+ * @author Lion Li
+ */
+@RequiredArgsConstructor
+@Service
+public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
+
+    private final SysConfigMapper configMapper;
+
+    /**
+     * 分页查询参数配置列表
+     *
+     * @param config    查询条件
+     * @param pageQuery 分页参数
+     * @return 参数配置分页列表
+     */
+    @Override
+    public PageResult<SysConfigVo> selectPageConfigList(SysConfigBo config, PageQuery pageQuery) {
+        LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
+        Page<SysConfigVo> page = configMapper.selectVoPage(pageQuery.build(), lqw);
+        return PageResult.build(page.getRecords(), page.getTotal());
+    }
+
+    /**
+     * 查询参数配置信息
+     *
+     * @param configId 参数配置ID
+     * @return 参数配置信息
+     */
+    @Override
+    public SysConfigVo selectConfigById(Long configId) {
+        return configMapper.selectVoById(configId);
+    }
+
+    /**
+     * 根据键名查询参数配置信息
+     *
+     * @param configKey 参数key
+     * @return 参数键值
+     */
+    @Cacheable(cacheNames = CacheNames.SYS_CONFIG, key = "#configKey")
+    @Override
+    public String selectConfigByKey(String configKey) {
+        SysConfig retConfig = configMapper.lambda().eq(SysConfig::getConfigKey, configKey).one();
+        return ObjectUtils.notNullGetter(retConfig, SysConfig::getConfigValue, StringUtils.EMPTY);
+    }
+
+    /**
+     * 获取注册开关
+     *
+     * @return true开启，false关闭
+     */
+    @Override
+    public boolean selectRegisterEnabled() {
+        return Convert.toBool(this.getConfigValue("sys.account.registerUser"));
+    }
+
+    /**
+     * 查询参数配置列表
+     *
+     * @param config 参数配置信息
+     * @return 参数配置集合
+     */
+    @Override
+    public List<SysConfigVo> selectConfigList(SysConfigBo config) {
+        LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
+        return configMapper.selectVoList(lqw);
+    }
+
+    /**
+     * 构造参数配置列表查询条件。
+     *
+     * @param bo 参数配置筛选条件
+     * @return 包含名称、键名、类型与时间区间的查询包装器
+     */
+    private LambdaQueryWrapper<SysConfig> buildQueryWrapper(SysConfigBo bo) {
+        Map<String, Object> params = bo.getParams();
+        return QueryBuilder.lambda(SysConfig.class)
+            .likeIfText(SysConfig::getConfigName, bo.getConfigName())
+            .eqIfText(SysConfig::getConfigType, bo.getConfigType())
+            .likeIfText(SysConfig::getConfigKey, bo.getConfigKey())
+            .betweenParams(SysConfig::getCreateTime, params, "beginTime", "endTime")
+            .orderByAsc(SysConfig::getConfigId)
+            .build();
+    }
+
+    /**
+     * 新增参数配置
+     *
+     * @param bo 参数配置信息
+     * @return 结果
+     */
+    @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
+    @Override
+    public String insertConfig(SysConfigBo bo) {
+        SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
+        int row = configMapper.insert(config);
+        if (row > 0) {
+            return config.getConfigValue();
+        }
+        throw new ServiceException("操作失败");
+    }
+
+    /**
+     * 修改参数配置
+     *
+     * @param bo 参数配置信息
+     * @return 结果
+     */
+    @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
+    @Override
+    public String updateConfig(SysConfigBo bo) {
+        int row;
+        SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
+        if (config.getConfigId() != null) {
+            SysConfig temp = configMapper.selectById(config.getConfigId());
+            if (ObjectUtil.isNotNull(temp) && !StringUtils.equals(temp.getConfigKey(), config.getConfigKey())) {
+                CacheUtils.evict(CacheNames.SYS_CONFIG, temp.getConfigKey());
+            }
+            row = configMapper.updateById(config);
+        } else {
+            CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
+            row = configMapper.lambda()
+                .eq(SysConfig::getConfigKey, config.getConfigKey())
+                .updateCount(config);
+        }
+        if (row > 0) {
+            return config.getConfigValue();
+        }
+        throw new ServiceException("操作失败");
+    }
+
+    /**
+     * 批量删除参数信息
+     *
+     * @param configIds 需要删除的参数ID
+     */
+    @Override
+    public void deleteConfigByIds(Collection<Long> configIds) {
+        List<SysConfig> list = configMapper.selectByIds(configIds);
+        list.forEach(config -> {
+            if (StringUtils.equals(SystemConstants.YES, config.getConfigType())) {
+                throw new ServiceException("内置参数【{}】不能删除", config.getConfigKey());
+            }
+            CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
+        });
+        configMapper.deleteByIds(configIds);
+    }
+
+    /**
+     * 重置参数缓存数据
+     */
+    @Override
+    public void resetConfigCache() {
+        CacheUtils.clear(CacheNames.SYS_CONFIG);
+    }
+
+    /**
+     * 校验参数键名是否唯一
+     *
+     * @param config 参数配置信息
+     * @return 结果
+     */
+    @Override
+    public boolean checkConfigKeyUnique(SysConfigBo config) {
+        boolean exist = configMapper.lambda()
+            .eq(SysConfig::getConfigKey, config.getConfigKey())
+            .neIfPresent(SysConfig::getConfigId, config.getConfigId())
+            .exists();
+        return !exist;
+    }
+
+    /**
+     * 根据参数 key 获取参数值
+     *
+     * @param configKey 参数 key
+     * @return 参数值
+     */
+    @Override
+    public String getConfigValue(String configKey) {
+        return SpringUtils.getAopProxy(this).selectConfigByKey(configKey);
+    }
+
+    /**
+     * 根据参数 key 获取 Map 类型的配置
+     *
+     * @param configKey 参数 key
+     * @return Dict 对象，如果配置为空或无法解析则返回空 Dict
+     */
+    @Override
+    public Dict getConfigMap(String configKey) {
+        String configValue = getConfigValue(configKey);
+        return JsonUtils.parseMap(configValue);
+    }
+
+    /**
+     * 根据参数 key 获取 Map 类型的配置列表
+     *
+     * @param configKey 参数 key
+     * @return Dict 列表，如果配置为空或无法解析则返回空列表
+     */
+    @Override
+    public List<Dict> getConfigArrayMap(String configKey) {
+        String configValue = getConfigValue(configKey);
+        return JsonUtils.parseArrayMap(configValue);
+    }
+
+    /**
+     * 根据参数 key 获取指定类型的配置对象
+     *
+     * @param configKey 参数 key
+     * @param clazz     目标对象类型
+     * @return 对象实例，如果配置为空或无法解析，返回 null
+     */
+    @Override
+    public <T> T getConfigObject(String configKey, Class<T> clazz) {
+        String configValue = getConfigValue(configKey);
+        return JsonUtils.parseObject(configValue, clazz);
+    }
+
+    /**
+     * 根据参数 key 获取指定类型的配置列表=
+     *
+     * @param configKey 参数 key
+     * @param clazz     目标元素类型
+     * @return 指定类型列表，如果配置为空或无法解析，返回空列表
+     */
+    @Override
+    public <T> List<T> getConfigArray(String configKey, Class<T> clazz) {
+        String configValue = getConfigValue(configKey);
+        return JsonUtils.parseArray(configValue, clazz);
+    }
+
+}

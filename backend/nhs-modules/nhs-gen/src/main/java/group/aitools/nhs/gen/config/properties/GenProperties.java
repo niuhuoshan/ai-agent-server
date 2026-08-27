@@ -1,0 +1,40 @@
+package group.aitools.nhs.gen.config.properties;
+
+import lombok.Data;
+import group.aitools.nhs.common.core.factory.YmlPropertySourceFactory;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
+
+/**
+ * 代码生成配置属性
+ *
+ * @author 秋辞未寒
+ */
+@Data
+@Component
+@ConfigurationProperties(prefix = "gen")
+@PropertySource(value = "classpath:generator.yml", factory = YmlPropertySourceFactory.class)
+public class GenProperties {
+
+    /**
+     * 作者
+     */
+    private String author;
+
+    /**
+     * 生成包路径
+     */
+    private String packageName;
+
+    /**
+     * 自动去除表前缀，默认是false
+     */
+    private boolean autoRemovePre = false;
+
+    /**
+     * 表前缀(类名不会包含表前缀)
+     */
+    private String tablePrefix;
+
+}

@@ -1,0 +1,157 @@
+package group.aitools.nhs.system.domain.bo;
+
+import io.github.linpeilie.annotations.AutoMapper;
+import io.github.linpeilie.annotations.AutoMappers;
+import lombok.Data;
+import group.aitools.nhs.common.log.event.OperLogEvent;
+import group.aitools.nhs.system.domain.SysOperLog;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 操作日志记录业务对象 sys_oper_log
+ *
+ * @author Michelle.Chung
+ * @date 2023-02-07
+ */
+
+@Data
+@AutoMappers({
+    @AutoMapper(target = SysOperLog.class, reverseConvertGenerate = false),
+    @AutoMapper(target = OperLogEvent.class)
+})
+public class SysOperLogBo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 日志主键
+     */
+    private Long operId;
+
+    /**
+     * 模块标题
+     */
+    private String title;
+
+    /**
+     * 业务类型（0其它 1新增 2修改 3删除）
+     */
+    private Integer businessType;
+
+    /**
+     * 业务类型数组
+     */
+    private Integer[] businessTypes;
+
+    /**
+     * 方法名称
+     */
+    private String method;
+
+    /**
+     * 请求方式
+     */
+    private String requestMethod;
+
+    /**
+     * 操作类别（0其它 1后台用户 2手机端用户）
+     */
+    private Integer operatorType;
+
+    /**
+     * 操作人员
+     */
+    private String operName;
+
+    /**
+     * 操作用户ID
+     */
+    private Long userId;
+
+    /**
+     * 操作部门ID
+     */
+    private Long deptId;
+
+    /**
+     * 部门名称
+     */
+    private String deptName;
+
+    /**
+     * 客户端
+     */
+    private String clientKey;
+
+    /**
+     * 设备类型
+     */
+    private String deviceType;
+
+    /**
+     * 浏览器类型
+     */
+    private String browser;
+
+    /**
+     * 操作系统
+     */
+    private String os;
+
+    /**
+     * 请求URL
+     */
+    private String operUrl;
+
+    /**
+     * 主机地址
+     */
+    private String operIp;
+
+    /**
+     * 操作地点
+     */
+    private String operLocation;
+
+    /**
+     * 请求参数
+     */
+    private String operParam;
+
+    /**
+     * 返回参数
+     */
+    private String jsonResult;
+
+    /**
+     * 操作状态（0正常 1异常）
+     */
+    private Integer status;
+
+    /**
+     * 错误消息
+     */
+    private String errorMsg;
+
+    /**
+     * 操作时间
+     */
+    private LocalDateTime operTime;
+
+    /**
+     * 消耗时间
+     */
+    private Long costTime;
+
+    /**
+     * 请求参数
+     */
+    private Map<String, Object> params = new HashMap<>();
+
+}

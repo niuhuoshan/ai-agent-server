@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>group.aitools.nhs</groupId>
+        <artifactId>nhs-common</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>nhs-common-satoken</artifactId>
+
+    <description>
+        nhs-common-satoken 权限认证
+    </description>
+
+    <dependencies>
+
+        <!-- 核心模块 -->
+        <dependency>
+            <groupId>group.aitools.nhs</groupId>
+            <artifactId>nhs-common-core</artifactId>
+        </dependency>
+
+        <!-- NHS Common Redis-->
+        <dependency>
+            <groupId>group.aitools.nhs</groupId>
+            <artifactId>nhs-common-redis</artifactId>
+        </dependency>
+
+        <!-- api模块 -->
+        <dependency>
+            <groupId>group.aitools.nhs</groupId>
+            <artifactId>nhs-api</artifactId>
+        </dependency>
+
+        <!-- spring-webmvc 依赖 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <!-- Sa-Token 权限认证, 在线文档：http://sa-token.dev33.cn/ -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-spring-boot4-starter</artifactId>
+        </dependency>
+
+        <!-- Sa-Token 整合 jwt -->
+        <dependency>
+            <groupId>cn.dev33</groupId>
+            <artifactId>sa-token-jwt</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>cn.hutool</groupId>
+                    <artifactId>hutool-all</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- 本地缓存 -->
+        <dependency>
+            <groupId>com.github.ben-manes.caffeine</groupId>
+            <artifactId>caffeine</artifactId>
+        </dependency>
+
+    </dependencies>
+
+</project>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>nhs-server</artifactId>
+        <groupId>group.aitools.nhs</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>nhs-common</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        common 通用模块
+    </description>
+
+    <modules>
+        <module>nhs-common-bom</module>
+        <module>nhs-common-core</module>
+        <module>nhs-common-doc</module>
+        <module>nhs-common-excel</module>
+        <module>nhs-common-job</module>
+        <module>nhs-common-log</module>
+        <module>nhs-common-mail</module>
+        <module>nhs-common-mybatis</module>
+        <module>nhs-common-oss</module>
+        <module>nhs-common-redis</module>
+        <module>nhs-common-satoken</module>
+        <module>nhs-common-security</module>
+        <module>nhs-common-sms</module>
+        <module>nhs-common-elasticsearch</module>
+        <module>nhs-common-web</module>
+        <module>nhs-common-translation</module>
+        <module>nhs-common-sensitive</module>
+        <module>nhs-common-json</module>
+        <module>nhs-common-encrypt</module>
+        <module>nhs-common-push</module>
+        <module>nhs-common-liteflow</module>
+        <module>nhs-common-mqtt</module>
+        <module>nhs-common-ai</module>
+        <module>nhs-common-mcp</module>
+    </modules>
+
+</project>

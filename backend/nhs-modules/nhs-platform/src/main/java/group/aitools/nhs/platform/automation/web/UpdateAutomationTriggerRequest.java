@@ -1,0 +1,62 @@
+package group.aitools.nhs.platform.automation.web;
+
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
+import java.util.Map;
+
+/**
+ * 封装Update自动化Trigger相关的不可变数据。
+ */
+public record UpdateAutomationTriggerRequest(
+    @NotBlank @Size(max = 128) String name,
+    @NotNull @Positive Long taskId,
+    @NotNull @Positive Long taskVersionId,
+    @NotNull @Positive Long serviceAccountId,
+    @Size(max = 128) String cronExpression,
+    @Size(max = 64) String timezone,
+    @Size(max = 16) String misfirePolicy,
+    @Min(1) @Max(10) Integer maxCatchupCount,
+    @Min(1) @Max(10) Integer maxAttempts,
+    @Size(max = 131072) String inputTemplate,
+    @NotBlank @Size(max = 16) String status,
+    @NotNull @Positive Long revisionNo,
+    Map<String, Object> config
+) {
+    /**
+     * 创建 {@code UpdateAutomationTriggerRequest} 实例并初始化所需依赖。
+     *
+     * @param name 名称
+     * @param taskId 资源标识
+     * @param taskVersionId 资源标识
+     * @param serviceAccountId 资源标识
+     * @param cronExpression {@code cronExpression}参数
+     * @param timezone {@code timezone}参数
+     * @param misfirePolicy misfire策略参数
+     * @param maxCatchupCount {@code maxCatchupCount}参数
+     * @param maxAttempts {@code maxAttempts}参数
+     * @param inputTemplate input模板参数
+     * @param status 目标状态
+     * @param revisionNo {@code revisionNo}参数
+     * @param config {@code config}参数
+     */
+    public UpdateAutomationTriggerRequest {
+        config = config == null ? Map.of() : Map.copyOf(config);
+    }
+
+    /**
+     * 处理{@code rejectUnknownField}相关逻辑。
+     *
+     * @param field {@code field}参数
+     * @param ignored {@code ignored}参数
+     */
+    @JsonAnySetter
+    public void rejectUnknownField(String field, Object ignored) {
+        throw new IllegalArgumentException("不支持的自动化触发器字段：" + field);
+    }
+}

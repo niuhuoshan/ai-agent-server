@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: nhs-sandbox-runner
+  main:
+    web-application-type: none
+
+agent:
+  sandbox:
+    runner:
+      platform-base-url: ${NHS_SANDBOX_PLATFORM_URL:http://127.0.0.1:8080}
+      runner-key: ${NHS_SANDBOX_RUNNER_KEY:local-runner}
+      runner-name: ${NHS_SANDBOX_RUNNER_NAME:Local Sandbox Runner}
+      runner-version: ${NHS_SANDBOX_RUNNER_VERSION:1.0.0}
+      bootstrap-token: ${NHS_SANDBOX_BOOTSTRAP_TOKEN:}
+      credential-file: ${NHS_SANDBOX_CREDENTIAL_FILE:./data/sandbox-runner/credential}
+      engine: ${NHS_SANDBOX_ENGINE:podman}
+      workspace-root: ${NHS_SANDBOX_WORKSPACE_ROOT:./data/agent-workspaces}
+      skill-source-root: ${NHS_SANDBOX_SKILL_SOURCE_ROOT:./data/agent-workspaces}
+      skill-staging-root: ${NHS_SANDBOX_SKILL_STAGING_ROOT:./data/agent-workspaces/.skill-staging}
+      max-concurrency: ${NHS_SANDBOX_MAX_CONCURRENCY:1}
+      poll-interval-ms: ${NHS_SANDBOX_POLL_INTERVAL_MS:1000}
+      heartbeat-interval-seconds: ${NHS_SANDBOX_HEARTBEAT_SECONDS:15}
+      templates: {}

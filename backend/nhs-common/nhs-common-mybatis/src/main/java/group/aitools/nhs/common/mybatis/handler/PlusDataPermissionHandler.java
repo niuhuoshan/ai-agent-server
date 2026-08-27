@@ -1,0 +1,451 @@
+package group.aitools.nhs.common.mybatis.handler;
+
+import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaCheckRole;
+import cn.hutool.core.annotation.AnnotationUtil;
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ObjectUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.sf.jsqlparser.JSQLParserException;
+import net.sf.jsqlparser.expression.Expression;
+import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionList;
+import net.sf.jsqlparser.parser.CCJSqlParserUtil;
+import group.aitools.nhs.common.core.exception.ServiceException;
+import group.aitools.nhs.common.core.utils.ServletUtils;
+import group.aitools.nhs.common.core.utils.SpringUtils;
+import group.aitools.nhs.common.core.utils.StreamUtils;
+import group.aitools.nhs.common.core.utils.StringUtils;
+import group.aitools.nhs.common.mybatis.annotation.DataColumn;
+import group.aitools.nhs.common.mybatis.annotation.DataPermission;
+import group.aitools.nhs.common.mybatis.core.domain.DataPermissionAccess;
+import group.aitools.nhs.common.mybatis.enums.DataScopeType;
+import group.aitools.nhs.common.mybatis.helper.DataPermissionHelper;
+import group.aitools.nhs.common.satoken.utils.LoginHelper;
+import group.aitools.nhs.system.api.domain.RoleDTO;
+import group.aitools.nhs.system.api.model.LoginUser;
+import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.expression.*;
+import org.springframework.expression.common.TemplateParserContext;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerMapping;
+
+import java.lang.annotation.Annotation;
+import java.util.*;
+import java.util.function.Function;
+
+/**
+ * 数据权限过滤
+ *
+ * @author Lion Li
+ * @version 3.5.0
+ */
+@Slf4j
+public class PlusDataPermissionHandler {
+
+    /**
+     * spel 解析器
+     */
+    private final ExpressionParser parser = new SpelExpressionParser();
+
+    /**
+     * SpEL 模板解析上下文。
+     */
+    private final ParserContext parserContext = new TemplateParserContext();
+
+    /**
+     * bean解析器 用于处理 spel 表达式中对 bean 的调用
+     */
+    private final BeanResolver beanResolver = new BeanFactoryResolver(SpringUtils.getBeanFactory());
+
+    /**
+     * 获取数据过滤条件的 SQL 片段
+     *
+     * @param where    原始的查询条件表达式
+     * @param isSelect 是否为查询语句
+     * @return 数据过滤条件的 SQL 片段
+     */
+    public Expression getSqlSegment(Expression where, boolean isSelect) {
+        try {
+            LoginUser currentUser = currentUser();
+            // 如果是超级管理员或租户管理员，则不过滤数据
+            if (LoginHelper.isSuperAdmin()) {
+                return where;
+            }
+            // 构造数据过滤条件的 SQL 片段
+            String dataFilterSql = buildDataFilter(getDataPermission(), currentUser, isSelect);
+            if (StringUtils.isBlank(dataFilterSql)) {
+                return where;
+            }
+            Expression expression = CCJSqlParserUtil.parseExpression(dataFilterSql);
+            // 数据权限使用单独的括号 防止与其他条件冲突
+            ParenthesedExpressionList<Expression> parenthesis = new ParenthesedExpressionList<>(expression);
+            if (ObjectUtil.isNotNull(where)) {
+                return new AndExpression(where, parenthesis);
+            } else {
+                return parenthesis;
+            }
+        } catch (JSQLParserException e) {
+            throw new ServiceException("数据权限解析异常 => " + e.getMessage());
+        } finally {
+            DataPermissionHelper.removePermission();
+        }
+    }
+
+    /**
+     * 构建数据过滤条件的 SQL 语句
+     *
+     * @param dataPermission 数据权限注解
+     * @param isSelect       标志当前操作是否为查询操作，查询操作和更新或删除操作在处理过滤条件时会有不同的处理方式
+     * @return 构建的数据过滤条件的 SQL 语句
+     * @throws ServiceException 如果角色的数据范围异常或者 key 与 value 的长度不匹配，则抛出 ServiceException 异常
+     */
+    private String buildDataFilter(DataPermission dataPermission, LoginUser user, boolean isSelect) {
+        // 更新或删除需满足所有条件
+        String joinStr = isSelect ? " OR " : " AND ";
+        if (StringUtils.isNotBlank(dataPermission.joinStr())) {
+            joinStr = " " + dataPermission.joinStr() + " ";
+        }
+        Object defaultValue = "-1";
+        NullSafeStandardEvaluationContext context = new NullSafeStandardEvaluationContext(defaultValue);
+        context.addPropertyAccessor(new NullSafePropertyAccessor(context.getPropertyAccessors().getFirst(), defaultValue));
+        context.setBeanResolver(beanResolver);
+        DataPermissionHelper.getContext().forEach(context::setVariable);
+        Set<String> conditions = new HashSet<>();
+        DataPermissionAccess access = currentAccess();
+        List<RoleDTO> scopeRoles = scopeRoles(user, access);
+        if (CollUtil.isEmpty(scopeRoles)) {
+            if (access.constrained()) {
+                return " 1 = 0 ";
+            }
+            return StringUtils.EMPTY;
+        }
+        // 优先设置变量
+        List<String> keys = new ArrayList<>();
+        for (DataColumn dataColumn : dataPermission.value()) {
+            if (dataColumn.key().length != dataColumn.value().length) {
+                throw new ServiceException("角色数据范围异常 => key与value长度不匹配");
+            }
+            // 设置注解变量 key 为表达式变量 value 为变量值
+            for (int i = 0; i < dataColumn.key().length; i++) {
+                context.setVariable(dataColumn.key()[i], dataColumn.value()[i]);
+            }
+            keys.addAll(Arrays.stream(dataColumn.key()).map(key -> "#" + key).toList());
+        }
+
+        for (RoleDTO role : scopeRoles) {
+            context.setVariable("roleId", role.getRoleId());
+            // 获取角色权限泛型
+            DataScopeType type = DataScopeType.findCode(role.getDataScope());
+            if (ObjectUtil.isNull(type)) {
+                throw new ServiceException("角色数据范围异常 => " + role.getDataScope());
+            }
+            // 全部数据权限直接返回
+            if (type == DataScopeType.ALL) {
+                return StringUtils.EMPTY;
+            }
+            boolean isSuccess = false;
+            for (DataColumn dataColumn : dataPermission.value()) {
+                // 不包含 key 变量 则不处理
+                if (!StringUtils.containsAny(type.getSqlTemplate(), keys.toArray(String[]::new))) {
+                    continue;
+                }
+                // 当前注解不满足模板 不处理
+                if (!StringUtils.containsAny(type.getSqlTemplate(), dataColumn.key())) {
+                    continue;
+                }
+                // 忽略数据权限 防止spel表达式内有其他sql查询导致死循环调用
+                String sql = DataPermissionHelper.ignore(() ->
+                    parser.parseExpression(type.getSqlTemplate(), parserContext).getValue(context, String.class)
+                );
+                // 解析sql模板并填充
+                conditions.add(joinStr + sql);
+                isSuccess = true;
+            }
+            // 未处理成功则填充兜底方案
+            if (!isSuccess && StringUtils.isNotBlank(type.getElseSql())) {
+                conditions.add(joinStr + type.getElseSql());
+            }
+        }
+
+        if (CollUtil.isNotEmpty(conditions)) {
+            String sql = StreamUtils.join(conditions, Function.identity(), "");
+            return sql.substring(joinStr.length());
+        }
+        return StringUtils.EMPTY;
+    }
+
+    /**
+     * 获取当前登录用户信息
+     *
+     * @return 当前登录用户的LoginUser对象，可能为null（如未登录场景）
+     */
+    private LoginUser currentUser() {
+        // 从数据权限助手缓存中获取当前登录用户
+        LoginUser currentUser = DataPermissionHelper.getVariable("user");
+        if (ObjectUtil.isNull(currentUser)) {
+            currentUser = LoginHelper.getLoginUser();
+            DataPermissionHelper.setVariable("user", currentUser);
+        }
+        return currentUser;
+    }
+
+    /**
+     * 获取当前请求已解析的数据权限访问控制对象。
+     *
+     * @return 数据权限访问控制对象
+     */
+    private DataPermissionAccess currentAccess() {
+        DataPermissionAccess access = DataPermissionHelper.getAccess();
+        if (access != null) {
+            return access;
+        }
+        DataPermissionAccess resolvedAccess = resolveAccess();
+        DataPermissionHelper.setAccess(resolvedAccess);
+        return resolvedAccess;
+    }
+
+    /**
+     * 根据当前接口权限约束筛选参与数据权限计算的角色。
+     *
+     * @param user   当前登录用户
+     * @param access 当前接口访问约束
+     * @return 参与数据权限计算的角色集合
+     */
+    private List<RoleDTO> scopeRoles(LoginUser user, DataPermissionAccess access) {
+        // 以下流程按业务条件逐级校验并选择处理分支，条件不满足时会提前终止。
+        List<RoleDTO> roles = user.getRoles();
+        if (!access.constrained()) {
+            return roles;
+        }
+        Map<Long, RoleDTO> allRoleMap = new LinkedHashMap<>();
+        if (CollUtil.isNotEmpty(roles)) {
+            roles.forEach(role -> allRoleMap.put(role.getRoleId(), role));
+        }
+        Map<Long, RoleDTO> roleMap = new LinkedHashMap<>();
+        Map<String, List<Long>> dataScopeRoleMap = user.getDataScopeRoleMap();
+        if (CollUtil.isNotEmpty(dataScopeRoleMap)) {
+            access.perms().forEach(perm -> {
+                List<Long> roleIds = dataScopeRoleMap.get(perm);
+                if (CollUtil.isNotEmpty(roleIds)) {
+                    roleIds.forEach(roleId -> {
+                        RoleDTO role = allRoleMap.get(roleId);
+                        if (role != null) {
+                            roleMap.putIfAbsent(role.getRoleId(), role);
+                        }
+                    });
+                }
+            });
+        }
+        if (CollUtil.isNotEmpty(roles) && CollUtil.isNotEmpty(access.roleKeys())) {
+            roles.stream()
+                .filter(role -> StringUtils.isNotBlank(role.getRoleKey()))
+                .filter(role -> StringUtils.splitList(role.getRoleKey()).stream().anyMatch(access.roleKeys()::contains))
+                .forEach(role -> roleMap.putIfAbsent(role.getRoleId(), role));
+        }
+        return new ArrayList<>(roleMap.values());
+    }
+
+    /**
+     * 从当前请求处理器上解析接口权限和角色约束。
+     *
+     * @return 数据权限访问控制对象
+     */
+    private DataPermissionAccess resolveAccess() {
+        // 以下流程按业务条件逐级校验并选择处理分支，条件不满足时会提前终止。
+        HttpServletRequest request = ServletUtils.getRequest();
+        if (request == null) {
+            return DataPermissionAccess.EMPTY;
+        }
+        Object handler = request.getAttribute(HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE);
+        if (!(handler instanceof HandlerMethod handlerMethod)) {
+            return DataPermissionAccess.EMPTY;
+        }
+        Set<String> perms = new LinkedHashSet<>();
+        Set<String> roleKeys = new LinkedHashSet<>();
+        SaCheckPermission saCheckPermission = findAnnotation(handlerMethod, SaCheckPermission.class);
+        if (saCheckPermission != null) {
+            perms.addAll(toSet(saCheckPermission.value()));
+            roleKeys.addAll(toSet(saCheckPermission.orRole()));
+        }
+        SaCheckRole saCheckRole = findAnnotation(handlerMethod, SaCheckRole.class);
+        if (saCheckRole != null) {
+            roleKeys.addAll(toSet(saCheckRole.value()));
+        }
+        if (perms.isEmpty() && roleKeys.isEmpty()) {
+            return DataPermissionAccess.EMPTY;
+        }
+        return new DataPermissionAccess(Set.copyOf(perms), Set.copyOf(roleKeys));
+    }
+
+    /**
+     * 优先从方法、再从类上查找指定注解。
+     *
+     * @param handlerMethod  当前请求处理方法
+     * @param annotationType 注解类型
+     * @param <A>            注解类型
+     * @return 注解对象，未配置时返回 null
+     */
+    private <A extends Annotation> A findAnnotation(HandlerMethod handlerMethod, Class<A> annotationType) {
+        A annotation = AnnotationUtil.getAnnotation(handlerMethod.getMethod(), annotationType);
+        if (annotation != null) {
+            return annotation;
+        }
+        return AnnotationUtil.getAnnotation(handlerMethod.getBeanType(), annotationType);
+    }
+
+    /**
+     * 将注解中的字符串数组转换为去空后的集合。
+     *
+     * @param values 注解值数组
+     * @return 字符串集合
+     */
+    private Set<String> toSet(String[] values) {
+        if (values == null || values.length == 0) {
+            return Set.of();
+        }
+        Set<String> result = new LinkedHashSet<>();
+        Arrays.stream(values).filter(StringUtils::isNotBlank).forEach(result::add);
+        return result;
+    }
+
+    /**
+     * 根据映射语句 ID 或类名获取对应的 DataPermission 注解对象
+     *
+     * @return DataPermission 注解对象，如果不存在则返回 null
+     */
+    public DataPermission getDataPermission() {
+        return DataPermissionHelper.getPermission();
+    }
+
+    /**
+     * 检查给定的映射语句 ID 是否有效，即是否能够找到对应的 DataPermission 注解对象
+     *
+     * @return 如果找到对应的 DataPermission 注解对象，则返回 false；否则返回 true
+     */
+    public boolean invalid() {
+        return getDataPermission() == null;
+    }
+
+    /**
+     * 对所有null变量找不到的变量返回默认值
+     */
+    @AllArgsConstructor
+    private static class NullSafeStandardEvaluationContext extends StandardEvaluationContext {
+
+        /**
+         * 变量值为空时返回的默认值。
+         */
+        private final Object defaultValue;
+
+        /**
+         * 查找 SpEL 变量，变量为空时返回默认值。
+         *
+         * @param name 变量名
+         * @return 变量值或默认值
+         */
+        @Override
+        public Object lookupVariable(String name) {
+            Object obj = super.lookupVariable(name);
+            // 如果读取到的值是 null，则返回默认值
+            if (obj == null) {
+                return defaultValue;
+            }
+            return obj;
+        }
+
+    }
+
+    /**
+     * 对所有null变量找不到的变量返回默认值 委托模式 将不需要处理的方法委托给原处理器
+     */
+    @AllArgsConstructor
+    private static class NullSafePropertyAccessor implements PropertyAccessor {
+
+        /**
+         * 原始属性访问器。
+         */
+        private final PropertyAccessor delegate;
+
+        /**
+         * 属性值为空时返回的默认值。
+         */
+        private final Object defaultValue;
+
+        /**
+         * 获取当前访问器支持的目标类型。
+         *
+         * @return 目标类型数组
+         */
+        @Override
+        public Class<?>[] getSpecificTargetClasses() {
+            return delegate.getSpecificTargetClasses();
+        }
+
+        /**
+         * 判断指定属性是否可读。
+         *
+         * @param context 表达式上下文
+         * @param target  目标对象
+         * @param name    属性名
+         * @return true 可读 false 不可读
+         * @throws AccessException 属性访问异常
+         */
+        @Override
+        public boolean canRead(EvaluationContext context, Object target, String name) throws AccessException {
+            return delegate.canRead(context, target, name);
+        }
+
+        /**
+         * 读取属性值，属性值为空时返回默认值。
+         *
+         * @param context 表达式上下文
+         * @param target  目标对象
+         * @param name    属性名
+         * @return 属性值
+         * @throws AccessException 属性访问异常
+         */
+        @Override
+        public TypedValue read(EvaluationContext context, Object target, String name) throws AccessException {
+            TypedValue value = delegate.read(context, target, name);
+            // 如果读取到的值是 null，则返回默认值
+            if (value.getValue() == null) {
+                return new TypedValue(defaultValue);
+            }
+            return value;
+        }
+
+        /**
+         * 判断指定属性是否可写。
+         *
+         * @param context 表达式上下文
+         * @param target  目标对象
+         * @param name    属性名
+         * @return true 可写 false 不可写
+         * @throws AccessException 属性访问异常
+         */
+        @Override
+        public boolean canWrite(EvaluationContext context, Object target, String name) throws AccessException {
+            return delegate.canWrite(context, target, name);
+        }
+
+        /**
+         * 写入属性值。
+         *
+         * @param context  表达式上下文
+         * @param target   目标对象
+         * @param name     属性名
+         * @param newValue 新属性值
+         * @throws AccessException 属性访问异常
+         */
+        @Override
+        public void write(EvaluationContext context, Object target, String name, Object newValue) throws AccessException {
+            delegate.write(context, target, name, newValue);
+        }
+    }
+
+}

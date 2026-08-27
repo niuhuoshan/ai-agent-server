@@ -1,0 +1,6 @@
+group.aitools.nhs.common.translation.config.TranslationConfig
+group.aitools.nhs.common.translation.core.impl.DeptNameTranslationImpl
+group.aitools.nhs.common.translation.core.impl.DictTypeTranslationImpl
+group.aitools.nhs.common.translation.core.impl.OssUrlTranslationImpl
+group.aitools.nhs.common.translation.core.impl.UserNameTranslationImpl
+group.aitools.nhs.common.translation.core.impl.NicknameTranslationImpl

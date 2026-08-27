@@ -1,0 +1,5 @@
+group.aitools.nhs.common.redis.config.RedisConfig
+group.aitools.nhs.common.redis.config.CacheConfig
+group.aitools.nhs.common.redis.config.IdempotentConfig
+group.aitools.nhs.common.redis.config.RateLimiterConfig
+group.aitools.nhs.common.redis.config.Lock4jConfig

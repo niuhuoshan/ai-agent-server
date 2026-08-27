@@ -1,0 +1,4 @@
+group.aitools.nhs.common.core.config.ApplicationConfig
+group.aitools.nhs.common.core.config.ThreadPoolConfig
+group.aitools.nhs.common.core.config.ValidatorConfig
+group.aitools.nhs.common.core.utils.SpringUtils

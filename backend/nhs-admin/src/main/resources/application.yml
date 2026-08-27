@@ -1,0 +1,457 @@
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8080
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  # jetty 配置
+  jetty:
+    # HTTP post内容的最大大小。当值为-1时，默认值为大小是无限的
+    max-http-form-post-size: -1
+    threads:
+      # 最小线程数
+      min: 8
+      # 最大线程数
+      max: 256
+
+captcha:
+  # 是否启用验证码校验
+  enable: true
+  # 验证码类型 math 数组计算 char 字符验证
+  type: math
+  # 数字验证码位数
+  numberLength: 1
+  # 字符验证码长度
+  charLength: 4
+
+# 日志配置
+logging:
+  level:
+    group.aitools.nhs: @logging.level@
+    org.springframework: warn
+    org.mybatis.spring.mapper: error
+    org.apache.fury: warn
+  config: classpath:logback-plus.xml
+
+# 用户配置
+user:
+  password:
+    # 密码最大错误次数
+    maxRetryCount: 5
+    # 密码锁定时间（默认10分钟）
+    lockTime: 10
+
+# Spring配置
+spring:
+  application:
+    name: nhs
+  threads:
+    # 开启虚拟线程 仅jdk21可用
+    virtual:
+      enabled: false
+  task:
+    execution:
+      # 从 springboot 3.5 开始 spring自带线程池
+      # 不再需要 AsyncConfig与ThreadPoolConfig 可直接注入线程池使用
+      thread-name-prefix: async-
+      # 由spring自己初始化线程池
+      mode: force
+  # 资源信息
+  messages:
+    # 国际化资源文件路径
+    basename: i18n/messages
+  profiles:
+    active: @profiles.active@
+  # 文件上传
+  servlet:
+    multipart:
+      # 单个文件大小
+      max-file-size: 10MB
+      # 设置总上传的文件大小
+      max-request-size: 20MB
+  mvc:
+    # 设置静态资源路径 防止所有请求都去查静态资源
+    static-path-pattern: /static/**
+    format:
+      date-time: yyyy-MM-dd HH:mm:ss
+  jackson:
+    serialization:
+      # 格式化输出
+      indent_output: false
+      # 忽略无法转换的对象
+      fail_on_empty_beans: false
+    deserialization:
+      # 允许对象忽略json中不存在的属性
+      fail_on_unknown_properties: false
+
+# Sa-Token配置
+sa-token:
+  # token名称 (同时也是cookie名称)
+  token-name: Authorization
+  # 是否允许同一账号并发登录 (为true时允许一起登录, 为false时新登录挤掉旧登录)
+  is-concurrent: true
+  # 在多人登录同一账号时，是否共用一个token (为true时所有登录共用一个token, 为false时每次登录新建一个token)
+  is-share: false
+  # jwt秘钥
+  jwt-secret-key: ${SA_TOKEN_JWT_SECRET:}
+
+# security配置
+security:
+  # 排除路径
+  excludes:
+    - /*.html
+    - /**/*.html
+    - /**/*.css
+    - /**/*.js
+    - /favicon.ico
+    - /error
+    - /*/api-docs
+    - /*/api-docs/**
+    - /warm-flow-ui/config
+    - /snail-chat/**
+    - /api/snail/chat/**
+    # Authenticated by API credential plus HMAC in PlatformWebhookController.
+    - /open/platform/webhooks/**
+    # Authenticated by application credentials in MachineApiGatewayService.
+    - /open/v1/**
+    # Authenticated by bootstrap/Runner credentials, timestamp and nonce in SandboxRunnerController.
+    - /internal/sandbox/v1/**
+
+# MyBatisPlus配置
+# https://baomidou.com/config/
+mybatis-plus:
+  # 自定义配置 是否全局开启逻辑删除 关闭后 所有逻辑删除功能将失效
+  enableLogicDelete: true
+  # 多包名使用 例如 group.aitools.nhs.**.mapper,org.xxx.**.mapper
+  mapperPackage: group.aitools.nhs.**.mapper
+  # 对应的 XML 文件位置
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  # 实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: group.aitools.nhs.**.domain
+  global-config:
+    dbConfig:
+      # 主键类型
+      # AUTO 自增 NONE 空 INPUT 用户输入 ASSIGN_ID 雪花 ASSIGN_UUID 唯一 UUID
+      # 如需改为自增 需要将数据库表全部设置为自增
+      idType: ASSIGN_ID
+
+# 数据加密
+mybatis-encryptor:
+  # 是否开启加密
+  enable: false
+  # 默认加密算法
+  algorithm: BASE64
+  # 编码方式 BASE64/HEX。默认BASE64
+  encode: BASE64
+  # 安全秘钥 对称算法的秘钥 如：AES，SM4
+  password:
+  # 公私钥 非对称算法的公私钥 如：SM2，RSA
+  publicKey:
+  privateKey:
+
+# api接口加密
+api-decrypt:
+  # 是否开启全局接口加密
+  enabled: true
+  # AES 加密头标识
+  headerFlag: encrypt-key
+  # 响应加密公钥 非对称算法的公私钥 如：SM2，RSA 使用者请自行更换
+  publicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAs7fWZYU/V0N6c/UGWYtV7ANgyzk/zkd0GmZMBLbCR97mgKCV1W9HMntQ3c95ZDyVC4vl2kHFzISMBJR4o5WE8LYo+YiBPyVfgdIUiHb4koNnYByR5Ge/ZtVLwwFa4JFCeNrTWLVtwdR8dLucpl9popfGHnVBOLKrKuYwnp+jFH+GPwcSelRA9w+t6JXl/FnRSOfyK4947IYfM01bvUhjrbZ1QTZJ24nWCBFdB2ZLsWDutOAlUSmrJzFVJNwY0umTRLVWTXzvG6sus7x+6X+V1VYlzcALOZkfTCe4a4Pg5xRWFGyjaB9Xw0xR8FvvoyXpNji/TbZyn8CUrbMi4f93yQIDAQAB
+  # 请求解密私钥 非对称算法的公私钥 如：SM2，RSA 使用者请自行更换
+  # 对应前端加密公钥 MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDvEDuRIOM3oZPWj9Ukoc5pQklR4PFH6/clnjeFqjDLIgDyQvjxhgqAZQA+E9eD6qu6FsXPmK8djcL+nh3cFHz4pX473jDvO3Sve+8yL3VRQ0n2pRgQ2a01MJsy+WwTZCBYWf0VnLRIvANUoWQgy9vz94q7Va44dg7A1/3ICf+xAwIDAQAB
+  privateKey: ${API_DECRYPT_PRIVATE_KEY:}
+
+springdoc:
+  api-docs:
+    # 是否开启接口文档
+    enabled: true
+  info:
+    # 标题
+    title: '标题：企业级智能体工作平台_接口文档'
+    # 描述
+    description: '描述：私有化部署的企业 AI 工作执行平台'
+    # 版本
+    version: '版本号: ${project.version}'
+    # 作者信息
+    contact:
+      name: Lion Li
+      email: crazylionli@163.com
+      url: https://gitee.com/dromara/NHS-Vue-Plus
+  #这里定义了两个分组，可定义多个，也可以不定义
+  group-configs:
+    - group: 1.演示模块
+      packages-to-scan: group.aitools.nhs.demo
+    - group: 2.通用模块
+      packages-to-scan: group.aitools.nhs.web
+    - group: 3.系统模块
+      packages-to-scan: group.aitools.nhs.system
+    - group: 4.代码生成模块
+      packages-to-scan: group.aitools.nhs.gen
+    - group: 5.工作流模块
+      packages-to-scan: group.aitools.nhs.workflow
+
+# 防止XSS攻击
+xss:
+  # 过滤开关
+  enabled: true
+  # 排除链接
+  excludeUrls:
+    - /system/notice
+    - /warm-flow/save-json
+    # Preserve the exact bytes covered by the webhook HMAC.
+    - /open/platform/webhooks/**
+
+--- # 分布式锁 lock4j 全局配置
+lock4j:
+  # 获取分布式锁超时时间，默认为 3000 毫秒
+  acquire-timeout: 3000
+  # 分布式锁的超时时间，默认为 30 秒
+  expire: 30000
+
+--- # Actuator 监控端点的配置项
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: ALWAYS
+    logfile:
+      external-file: ./logs/sys-console.log
+
+--- # 统一消息推送配置
+message:
+  enabled: true
+  # sse / websocket
+  transport: sse
+  # 统一访问路径
+  path: /resource/message
+  # websocket 允许的跨域来源
+  allowedOrigins: '*'
+  # SSE 连接超时时间，单位毫秒
+  sse-timeout: 86400000
+  # 本地连接心跳检测间隔，单位秒
+  heartbeat-interval: 60
+  # WebSocket 单次发送超时时间，单位毫秒
+  web-socket-send-time-limit: 10000
+  # WebSocket 发送缓冲区大小
+  web-socket-buffer-size-limit: 64000
+
+--- # warm-flow工作流配置
+warm-flow:
+  # 是否开启工作流，默认true
+  enabled: true
+  # 是否开启设计器ui
+  ui: true
+  # 是否显示流程图顶部文字
+  top-text-show: true
+  # 是否渲染节点悬浮提示，默认true
+  node-tooltip: true
+  # 默认Authorization，如果有多个token，用逗号分隔
+  token-name: ${sa-token.token-name},clientid
+
+--- # LiteFlow 业务规则编排
+liteflow:
+  # 跟随工作流模块开关，避免禁用工作流时仍加载任务办理链
+  enable: ${warm-flow.enabled:true}
+  # 工作流模块用于编排任务办理链路
+  rule-source: classpath:liteflow/*.el.xml
+  # 开启虚拟线程
+  enable-virtual-thread: true
+
+--- # mqtt 配置
+# 具体配置还需查看文档
+# https://mica-mqtt.dreamlu.net/guide/spring/client.html
+mqtt.client:
+  # 是否开启客户端，默认：true
+  enabled: false
+  # 连接的服务端 ip ，默认：127.0.0.1
+  ip: 127.0.0.1
+  # 端口：默认：1883
+  port: 1883
+  # 客户端名称
+  name: Mqtt-Client
+  # 客户端Id（非常重要，一般为设备 sn，不可重复）
+  client-id: 000001
+  username: nhs
+  password: 123456
+  # 超时时间，单位：秒，默认：5秒
+  timeout: 5
+  # 重连时间，默认 5000 毫秒
+  re-interval: 5000
+  # mqtt 协议版本，可选 MQTT_3_1、mqtt_3_1_1、mqtt_5，默认：mqtt_5
+  version: mqtt_5
+  # 接收数据的 buffer size，默认：8k
+  read-buffer-size: 8KB
+  # 消息解析最大 bytes 长度，默认：10M
+  max-bytes-in-message: 10MB
+  # keep-alive 时间，单位：秒
+  keep-alive-secs: 60
+  # 开启保留 session 时，session 的有效期
+  session-expiry-interval-secs: 0
+  # 工作线程数，如果消息量比较大，例如做 emqx 的转发消息处理，可以调大此参数
+  mqtt-executor-size: 2
+  # 是否开启 ssl
+  ssl:
+    enabled: false
+    keystore-path:
+    keystore-pass:
+    truststore-path:
+    truststore-pass:
+
+--- # elasticsearch 功能配置
+# 文档地址: https://www.easy-es.cn/
+# 更改包名需要去 EasyEsConfiguration 修改包扫描(后续版本支持配置文件读取)
+easy-es:
+  # 是否开启EE自动配置
+  enable: false
+  # 兼容模式
+  compatible: true
+  # es连接地址+端口 格式必须为ip:port,如果是集群则可用逗号隔开
+  address: localhost:9200
+  # 默认为http
+  schema: http
+  # 注意ES建议使用账号认证 不使用会报警告日志
+  # 如果无账号密码则可不配置此行
+  # username:
+  # 如果无账号密码则可不配置此行
+  # password:
+  # 心跳策略时间 单位:ms
+  keep-alive-millis: 18000
+  # 连接超时时间 单位:ms
+  connectTimeout: 5000
+  # 通信超时时间 单位:ms
+  socketTimeout: 5000
+  # 连接请求超时时间 单位:ms
+  connectionRequestTimeout: 5000
+  # 最大连接数 单位:个
+  maxConnTotal: 100
+  # 最大连接路由数 单位:个
+  maxConnPerRoute: 100
+  global-config:
+    # 开启控制台打印通过本框架生成的DSL语句,默认为开启,测试稳定后的生产环境建议关闭,以提升少量性能
+    print-dsl: true
+    # 异步处理索引是否阻塞主线程 默认阻塞 数据量过大时调整为非阻塞异步进行 项目启动更快
+    asyncProcessIndexBlocking: true
+    db-config:
+      # 是否开启下划线转驼峰 默认为false
+      map-underscore-to-camel-case: true
+      # id生成策略 customize为自定义,id值由用户生成,比如取MySQL中的数据id,如缺省此项配置,则id默认策略为es自动生成
+      id-type: customize
+      # 字段更新策略 默认为not_null
+      field-strategy: not_null
+      # 默认开启,查询若指定了size超过1w条时也会自动开启,开启后查询所有匹配数据,若不开启,会导致无法获取数据总条数,其它功能不受影响.
+      enable-track-total-hits: true
+      # 数据刷新策略,默认为不刷新
+      refresh-policy: immediate
+
+--- # MCP 服务端配置
+spring.ai.mcp:
+  server:
+    # 与 nhs-admin 共用端口，默认端点为 /mcp
+    enabled: true
+    protocol: STREAMABLE
+    name: ${spring.application.name}
+    version: ${project.version}
+    type: SYNC
+    annotation-scanner:
+      enabled: true
+    streamable-http:
+      mcp-endpoint: /mcp
+
+--- # MCP 客户端配置
+spring.ai.mcp:
+  client:
+    # 需要接入外部 MCP Server 时再打开，并配置 streamable-http/stdio connections
+    enabled: false
+    name: ${spring.application.name}-mcp-client
+    version: ${project.version}
+    type: SYNC
+    toolcallback:
+      enabled: false
+    # Streamable HTTP 多服务端示例
+    streamable-http:
+      connections:
+        knowledge:
+          url: http://localhost:9001
+        crm:
+          url: http://localhost:9002
+    # STDIO 多服务端示例
+    stdio:
+      connections:
+        filesystem:
+          command: npx
+          args:
+            - -y
+            - '@modelcontextprotocol/server-filesystem'
+            - D:/data
+
+--- # Agent 平台数据库版本迁移
+spring:
+  flyway:
+    enabled: ${NHS_DB_MIGRATION_ENABLED:true}
+    locations: classpath:db/migration/agent
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: true
+    validate-migration-naming: true
+    clean-disabled: true
+    execute-in-transaction: false
+
+agent:
+  platform:
+    # Agent private workspaces share the host directory with the Sandbox Runner.
+    workspace-root: ${NHS_WORKSPACE_ROOT:./data/agent-workspaces}
+    model:
+      allow-http-endpoints: ${NHS_MODEL_ALLOW_HTTP:false}
+      allow-private-endpoints: ${NHS_MODEL_ALLOW_PRIVATE:false}
+    notification:
+      # Base64-encoded 32-byte installation key used for personal channel credentials.
+      config-key: ${NHS_NOTIFICATION_CONFIG_KEY:}
+      allow-http-webhook: ${NHS_NOTIFICATION_ALLOW_HTTP_WEBHOOK:false}
+      allow-private-smtp-host: ${NHS_NOTIFICATION_ALLOW_PRIVATE_SMTP_HOST:false}
+    sandbox:
+      # Required to register or rotate a Runner. Keep empty to disable registration.
+      bootstrap-token: ${NHS_SANDBOX_BOOTSTRAP_TOKEN:}
+      request-clock-skew-seconds: ${NHS_SANDBOX_CLOCK_SKEW_SECONDS:120}
+      heartbeat-ttl-seconds: ${NHS_SANDBOX_HEARTBEAT_TTL_SECONDS:45}
+      lease-seconds: ${NHS_SANDBOX_LEASE_SECONDS:90}
+    generated-files:
+      # Generated Word/Excel files are exposed only through 24-hour capability links.
+      storage-root: ${NHS_GENERATED_FILE_ROOT:./data/agent-generated-files}
+    conversation:
+      storage-root: ${NHS_CONVERSATION_STORAGE_ROOT:./data/agent-conversations}
+      vision-sidecar:
+        # Optional active multimodal model_key used when the selected chat model cannot read images.
+        model-key: ${NHS_VISION_SIDECAR_MODEL_KEY:}
+      attachment-scan:
+        # builtin-signature only detects EICAR; external requires a real scanner bean.
+        mode: ${NHS_ATTACHMENT_SCAN_MODE:builtin-signature}
+    web-tools:
+      # Required only by web_renderer_and_snapshot; leave empty to keep Chromium disabled.
+      chromium-executable: ${NHS_CHROMIUM_EXECUTABLE:}
+      connect-timeout-ms: ${NHS_WEB_CONNECT_TIMEOUT_MS:5000}
+      request-timeout-ms: ${NHS_WEB_REQUEST_TIMEOUT_MS:30000}
+      max-response-bytes: ${NHS_WEB_MAX_RESPONSE_BYTES:524288}
+      chromium-timeout-ms: ${NHS_CHROMIUM_TIMEOUT_MS:30000}
+      # Enable only when the service process has a working Chromium sandbox (recommended for non-root).
+      chromium-sandbox: ${NHS_CHROMIUM_SANDBOX:false}
+    browser:
+      # Browser control runs in the isolated Node/Playwright Worker container.
+      worker-url: ${NHS_BROWSER_WORKER_URL:http://127.0.0.1:8787}
+      request-timeout-ms: ${NHS_BROWSER_REQUEST_TIMEOUT_MS:30000}
+  runtime:
+    mcp:
+      session-idle-ms: ${NHS_MCP_SESSION_IDLE_MS:300000}
+      cleanup-delay-ms: ${NHS_MCP_CLEANUP_DELAY_MS:30000}
+      failure-threshold: ${NHS_MCP_FAILURE_THRESHOLD:3}
+      circuit-open-ms: ${NHS_MCP_CIRCUIT_OPEN_MS:30000}
+    agentscope:
+      enabled: ${NHS_RUNTIME_AGENTSCOPE_ENABLED:false}
+      workspace-root: ${NHS_WORKSPACE_ROOT:./data/agent-workspaces}
+      max-workspace-file-size-mb: ${NHS_WORKSPACE_MAX_FILE_MB:10}
+      allow-insecure-model-endpoints: ${NHS_MODEL_ALLOW_HTTP:false}
+      state-schema: agentscope
+      state-table: agentscope_sessions

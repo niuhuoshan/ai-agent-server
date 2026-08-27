@@ -1,0 +1,180 @@
+name: nhs
+
+services:
+  postgres:
+    image: ${POSTGRES_IMAGE:?POSTGRES_IMAGE is required}
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      POSTGRES_DB: ${POSTGRES_DB:?POSTGRES_DB is required}
+      POSTGRES_USER: ${POSTGRES_USER:?POSTGRES_USER is required}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init/postgres-init.sql:/docker-entrypoint-initdb.d/00-init.sql:ro
+      - ./init/sql:/opt/nhs/sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks: [backend]
+    security_opt: [no-new-privileges:true]
+
+  redis:
+    image: ${REDIS_IMAGE:?REDIS_IMAGE is required}
+    restart: unless-stopped
+    environment:
+      TZ: Asia/Shanghai
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+    command:
+      - sh
+      - -ec
+      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$${REDIS_PASSWORD}"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli --no-auth-warning -a \"$${REDIS_PASSWORD}\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    networks: [backend]
+    security_opt: [no-new-privileges:true]
+
+  app:
+    image: ${APP_IMAGE:?APP_IMAGE is required}
+    restart: unless-stopped
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis: { condition: service_healthy }
+    environment:
+      TZ: Asia/Shanghai
+      SPRING_PROFILES_ACTIVE: prod
+      DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB}?reWriteBatchedInserts=true
+      DB_USERNAME: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      SA_TOKEN_JWT_SECRET: ${SA_TOKEN_JWT_SECRET:?SA_TOKEN_JWT_SECRET is required}
+      API_DECRYPT_PRIVATE_KEY: ${API_DECRYPT_PRIVATE_KEY:?API_DECRYPT_PRIVATE_KEY is required}
+      NHS_RUNTIME_AGENTSCOPE_ENABLED: ${NHS_RUNTIME_AGENTSCOPE_ENABLED:-true}
+      NHS_WORKSPACE_ROOT: ${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}
+      NHS_MODEL_ALLOW_HTTP: ${NHS_MODEL_ALLOW_HTTP:-false}
+      NHS_MODEL_ALLOW_PRIVATE: ${NHS_MODEL_ALLOW_PRIVATE:-false}
+      NHS_VISION_SIDECAR_MODEL_KEY: ${NHS_VISION_SIDECAR_MODEL_KEY:-}
+      NHS_NOTIFICATION_CONFIG_KEY: ${NHS_NOTIFICATION_CONFIG_KEY:?NHS_NOTIFICATION_CONFIG_KEY is required}
+      NHS_NOTIFICATION_ALLOW_HTTP_WEBHOOK: ${NHS_NOTIFICATION_ALLOW_HTTP_WEBHOOK:-false}
+      NHS_NOTIFICATION_ALLOW_PRIVATE_SMTP_HOST: ${NHS_NOTIFICATION_ALLOW_PRIVATE_SMTP_HOST:-false}
+      NHS_BROWSER_WORKER_URL: http://browser-worker:8787
+      NHS_BROWSER_REQUEST_TIMEOUT_MS: ${NHS_BROWSER_REQUEST_TIMEOUT_MS:-30000}
+      NHS_SANDBOX_BOOTSTRAP_TOKEN: ${NHS_SANDBOX_BOOTSTRAP_TOKEN:-}
+      JAVA_OPTS: ${APP_JAVA_OPTS:--Xms512m -Xmx2048m}
+    volumes:
+      - app-data:/opt/nhs/data
+      - ${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}:${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}
+      - app-logs:/opt/nhs/logs
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/8080'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    networks: [backend]
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=256m
+      - /opt/nhs/temp:rw,nosuid,nodev,noexec,size=256m
+    security_opt: [no-new-privileges:true]
+
+  browser-worker:
+    image: ${BROWSER_WORKER_IMAGE:?BROWSER_WORKER_IMAGE is required}
+    restart: unless-stopped
+    environment:
+      PORT: "8787"
+      ALLOW_PRIVATE_TARGETS: ${NHS_BROWSER_ALLOW_PRIVATE_TARGETS:-false}
+      MAX_SESSIONS: ${NHS_BROWSER_MAX_SESSIONS:-8}
+      MAX_TABS_PER_SESSION: ${NHS_BROWSER_MAX_TABS_PER_SESSION:-8}
+      SESSION_IDLE_MINUTES: ${NHS_BROWSER_SESSION_IDLE_MINUTES:-30}
+      BROWSER_USER_AGENT: ${NHS_BROWSER_USER_AGENT:-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36}
+      BROWSER_LOCALE: ${NHS_BROWSER_LOCALE:-zh-CN}
+      BROWSER_TIMEZONE_ID: ${NHS_BROWSER_TIMEZONE_ID:-Asia/Shanghai}
+      BROWSER_STEALTH: ${NHS_BROWSER_STEALTH:-true}
+      SNAPSHOT_CACHE_TTL_MS: ${NHS_BROWSER_SNAPSHOT_CACHE_TTL_MS:-500}
+      SNAPSHOT_CACHE_LIMIT: ${NHS_BROWSER_SNAPSHOT_CACHE_LIMIT:-32}
+      UPLOAD_ROOT: /uploads
+    volumes:
+      - ${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}:/uploads:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8787/health').then(r => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks: [backend]
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=512m
+    security_opt: [no-new-privileges:true]
+
+  frontend:
+    image: ${FRONTEND_IMAGE:?FRONTEND_IMAGE is required}
+    restart: unless-stopped
+    depends_on:
+      app: { condition: service_healthy }
+    ports:
+      - ${HTTP_BIND_ADDRESS:-127.0.0.1}:${HTTP_PORT:-8080}:8080
+    volumes:
+      - ./runtime-config.js:/usr/share/nginx/html/runtime-config.js:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:8080/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 20
+    networks: [backend]
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx:rw,nosuid,nodev,noexec,size=64m
+      - /var/run:rw,nosuid,nodev,noexec,size=8m
+    security_opt: [no-new-privileges:true]
+
+  sandbox-runner:
+    profiles: [sandbox]
+    image: ${SANDBOX_RUNNER_IMAGE:?SANDBOX_RUNNER_IMAGE is required for sandbox profile}
+    restart: unless-stopped
+    depends_on:
+      app: { condition: service_healthy }
+    environment:
+      NHS_SANDBOX_PLATFORM_URL: http://app:8080
+      NHS_SANDBOX_RUNNER_KEY: ${NHS_SANDBOX_RUNNER_KEY:-offline-runner}
+      NHS_SANDBOX_RUNNER_NAME: ${NHS_SANDBOX_RUNNER_NAME:-Offline Sandbox Runner}
+      NHS_SANDBOX_BOOTSTRAP_TOKEN: ${NHS_SANDBOX_BOOTSTRAP_TOKEN:-}
+      NHS_SANDBOX_CREDENTIAL_FILE: /opt/agent-runner/data/credential
+      NHS_SANDBOX_ENGINE: docker
+      NHS_SANDBOX_WORKSPACE_ROOT: ${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}
+      NHS_SANDBOX_SKILL_STAGING_ROOT: ${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}/.skill-staging
+      NHS_SANDBOX_MAX_CONCURRENCY: ${NHS_SANDBOX_MAX_CONCURRENCY:-1}
+      NHS_SANDBOX_RUNNER_TEMPLATES_CODE: ${SANDBOX_TEMPLATE_CODE:-}
+      JAVA_OPTS: ${SANDBOX_JAVA_OPTS:--Xms128m -Xmx512m}
+    volumes:
+      - runner-data:/opt/agent-runner/data
+      - ${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}:${SANDBOX_WORKSPACE_HOST_PATH:-/var/lib/nhs/agent-workspaces}
+      - ${SANDBOX_ENGINE_SOCKET:-/var/run/docker.sock}:/var/run/docker.sock
+    group_add:
+      - ${SANDBOX_ENGINE_GID:-0}
+    networks: [backend]
+    read_only: true
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=64m
+    security_opt: [no-new-privileges:true]
+
+networks:
+  backend:
+    internal: false
+
+volumes:
+  postgres-data:
+  redis-data:
+  app-data:
+  app-logs:
+  runner-data:

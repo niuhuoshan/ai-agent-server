@@ -1,0 +1,426 @@
+package group.aitools.nhs.common.encrypt.utils;
+
+import cn.hutool.core.codec.Base64;
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
+import cn.hutool.crypto.SmUtil;
+import cn.hutool.crypto.asymmetric.KeyType;
+import cn.hutool.crypto.asymmetric.RSA;
+import cn.hutool.crypto.asymmetric.SM2;
+
+import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.interfaces.RSAKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * 安全相关工具类
+ *
+ * @author 老马
+ */
+public class EncryptUtils {
+
+    /**
+     * RSA密钥最小位数
+     */
+    public static final int MIN_RSA_KEY_SIZE = 1024;
+
+    /**
+     * 公钥
+     */
+    public static final String PUBLIC_KEY = "publicKey";
+
+    /**
+     * 私钥
+     */
+    public static final String PRIVATE_KEY = "privateKey";
+
+    /**
+     * Base64加密
+     *
+     * @param data 待加密数据
+     * @return 加密后字符串
+     */
+    public static String encryptByBase64(String data) {
+        return Base64.encode(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Base64解密
+     *
+     * @param data 待解密数据
+     * @return 解密后字符串
+     */
+    public static String decryptByBase64(String data) {
+        return Base64.decodeStr(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * AES加密
+     *
+     * @param data     待加密数据
+     * @param password 秘钥字符串
+     * @return 加密后字符串, 采用Base64编码
+     */
+    public static String encryptByAes(String data, String password) {
+        if (StrUtil.isBlank(password)) {
+            throw new IllegalArgumentException("AES需要传入秘钥信息");
+        }
+        // aes算法的秘钥要求是16位、24位、32位
+        int[] array = {16, 24, 32};
+        if (!ArrayUtil.contains(array, password.length())) {
+            throw new IllegalArgumentException("AES秘钥长度要求为16位、24位、32位");
+        }
+        return SecureUtil.aes(password.getBytes(StandardCharsets.UTF_8)).encryptBase64(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * AES加密
+     *
+     * @param data     待加密数据
+     * @param password 秘钥字符串
+     * @return 加密后字符串, 采用Hex编码
+     */
+    public static String encryptByAesHex(String data, String password) {
+        if (StrUtil.isBlank(password)) {
+            throw new IllegalArgumentException("AES需要传入秘钥信息");
+        }
+        // aes算法的秘钥要求是16位、24位、32位
+        int[] array = {16, 24, 32};
+        if (!ArrayUtil.contains(array, password.length())) {
+            throw new IllegalArgumentException("AES秘钥长度要求为16位、24位、32位");
+        }
+        return SecureUtil.aes(password.getBytes(StandardCharsets.UTF_8)).encryptHex(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * AES解密
+     *
+     * @param data     待解密数据
+     * @param password 秘钥字符串
+     * @return 解密后字符串
+     */
+    public static String decryptByAes(String data, String password) {
+        if (StrUtil.isBlank(password)) {
+            throw new IllegalArgumentException("AES需要传入秘钥信息");
+        }
+        // aes算法的秘钥要求是16位、24位、32位
+        int[] array = {16, 24, 32};
+        if (!ArrayUtil.contains(array, password.length())) {
+            throw new IllegalArgumentException("AES秘钥长度要求为16位、24位、32位");
+        }
+        return SecureUtil.aes(password.getBytes(StandardCharsets.UTF_8)).decryptStr(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * SM4加密（Base64编码）
+     *
+     * @param data     待加密数据
+     * @param password 秘钥字符串
+     * @return 加密后字符串, 采用Base64编码
+     */
+    public static String encryptBySm4(String data, String password) {
+        if (StrUtil.isBlank(password)) {
+            throw new IllegalArgumentException("SM4需要传入秘钥信息");
+        }
+        // sm4算法的秘钥要求是16位长度
+        int sm4PasswordLength = 16;
+        if (sm4PasswordLength != password.length()) {
+            throw new IllegalArgumentException("SM4秘钥长度要求为16位");
+        }
+        return SmUtil.sm4(password.getBytes(StandardCharsets.UTF_8)).encryptBase64(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * SM4加密（Hex编码）
+     *
+     * @param data     待加密数据
+     * @param password 秘钥字符串
+     * @return 加密后字符串, 采用Hex编码
+     */
+    public static String encryptBySm4Hex(String data, String password) {
+        if (StrUtil.isBlank(password)) {
+            throw new IllegalArgumentException("SM4需要传入秘钥信息");
+        }
+        // sm4算法的秘钥要求是16位长度
+        int sm4PasswordLength = 16;
+        if (sm4PasswordLength != password.length()) {
+            throw new IllegalArgumentException("SM4秘钥长度要求为16位");
+        }
+        return SmUtil.sm4(password.getBytes(StandardCharsets.UTF_8)).encryptHex(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * sm4解密
+     *
+     * @param data     待解密数据（可以是Base64或Hex编码）
+     * @param password 秘钥字符串
+     * @return 解密后字符串
+     */
+    public static String decryptBySm4(String data, String password) {
+        if (StrUtil.isBlank(password)) {
+            throw new IllegalArgumentException("SM4需要传入秘钥信息");
+        }
+        // sm4算法的秘钥要求是16位长度
+        int sm4PasswordLength = 16;
+        if (sm4PasswordLength != password.length()) {
+            throw new IllegalArgumentException("SM4秘钥长度要求为16位");
+        }
+        return SmUtil.sm4(password.getBytes(StandardCharsets.UTF_8)).decryptStr(data, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 产生sm2加解密需要的公钥和私钥
+     *
+     * @return 公私钥Map
+     */
+    public static Map<String, String> generateSm2Key() {
+        Map<String, String> keyMap = new HashMap<>(2);
+        SM2 sm2 = SmUtil.sm2();
+        keyMap.put(PRIVATE_KEY, sm2.getPrivateKeyBase64());
+        keyMap.put(PUBLIC_KEY, sm2.getPublicKeyBase64());
+        return keyMap;
+    }
+
+    /**
+     * sm2公钥加密
+     *
+     * @param data      待加密数据
+     * @param publicKey 公钥
+     * @return 加密后字符串, 采用Base64编码
+     */
+    public static String encryptBySm2(String data, String publicKey) {
+        if (StrUtil.isBlank(publicKey)) {
+            throw new IllegalArgumentException("SM2需要传入公钥进行加密");
+        }
+        SM2 sm2 = SmUtil.sm2(null, publicKey);
+        return sm2.encryptBase64(data, StandardCharsets.UTF_8, KeyType.PublicKey);
+    }
+
+    /**
+     * sm2公钥加密
+     *
+     * @param data      待加密数据
+     * @param publicKey 公钥
+     * @return 加密后字符串, 采用Hex编码
+     */
+    public static String encryptBySm2Hex(String data, String publicKey) {
+        if (StrUtil.isBlank(publicKey)) {
+            throw new IllegalArgumentException("SM2需要传入公钥进行加密");
+        }
+        SM2 sm2 = SmUtil.sm2(null, publicKey);
+        return sm2.encryptHex(data, StandardCharsets.UTF_8, KeyType.PublicKey);
+    }
+
+    /**
+     * sm2私钥解密
+     *
+     * @param data       待解密数据
+     * @param privateKey 私钥
+     * @return 解密后字符串
+     */
+    public static String decryptBySm2(String data, String privateKey) {
+        if (StrUtil.isBlank(privateKey)) {
+            throw new IllegalArgumentException("SM2需要传入私钥进行解密");
+        }
+        SM2 sm2 = SmUtil.sm2(privateKey, null);
+        return sm2.decryptStr(data, KeyType.PrivateKey, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * SM2公钥验签（Base64编码）
+     *
+     * @param data      原文数据
+     * @param sign      签名值
+     * @param publicKey 公钥
+     * @return true-验签成功，false-验签失败
+     */
+    public static boolean verifySm2Sign(String data, String sign, String publicKey) {
+        if (StrUtil.isBlank(data)) {
+            throw new IllegalArgumentException("SM2验签需要传入原文数据");
+        }
+        if (StrUtil.isBlank(sign)) {
+            throw new IllegalArgumentException("SM2验签需要传入签名值");
+        }
+        if (StrUtil.isBlank(publicKey)) {
+            throw new IllegalArgumentException("SM2验签需要传入公钥");
+        }
+        SM2 sm2 = SmUtil.sm2(null, publicKey);
+        return sm2.verify(data.getBytes(StandardCharsets.UTF_8), sign.getBytes(StandardCharsets.UTF_8));
+    }
+
+    /**
+     * SM2公钥验签（Hex编码）
+     *
+     * @param dataHex   原文数据（Hex编码）
+     * @param signHex   签名值（Hex编码）
+     * @param publicKey 公钥
+     * @return true-验签成功，false-验签失败
+     */
+    public static boolean verifySm2SignHex(String dataHex, String signHex, String publicKey) {
+        if (StrUtil.isBlank(dataHex)) {
+            throw new IllegalArgumentException("SM2验签需要传入Hex格式的原文数据");
+        }
+        if (StrUtil.isBlank(signHex)) {
+            throw new IllegalArgumentException("SM2验签需要传入Hex格式的签名值");
+        }
+        if (StrUtil.isBlank(publicKey)) {
+            throw new IllegalArgumentException("SM2验签需要传入公钥");
+        }
+        SM2 sm2 = SmUtil.sm2(null, publicKey);
+        return sm2.verifyHex(dataHex, signHex);
+    }
+
+    /**
+     * 产生RSA加解密需要的公钥和私钥
+     *
+     * @return 公私钥Map
+     */
+    public static Map<String, String> generateRsaKey() {
+        try {
+            Map<String, String> keyMap = new HashMap<>(2);
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(MIN_RSA_KEY_SIZE);
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            keyMap.put(PRIVATE_KEY, java.util.Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded()));
+            keyMap.put(PUBLIC_KEY, java.util.Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded()));
+            return keyMap;
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("生成RSA密钥失败", e);
+        }
+    }
+
+    /**
+     * rsa公钥加密
+     *
+     * @param data      待加密数据
+     * @param publicKey 公钥
+     * @return 加密后字符串, 采用Base64编码
+     */
+    public static String encryptByRsa(String data, String publicKey) {
+        if (StrUtil.isBlank(publicKey)) {
+            throw new IllegalArgumentException("RSA需要传入公钥进行加密");
+        }
+        validateRsaPublicKey(publicKey);
+        RSA rsa = SecureUtil.rsa(null, publicKey);
+        return rsa.encryptBase64(data, StandardCharsets.UTF_8, KeyType.PublicKey);
+    }
+
+    /**
+     * rsa公钥加密
+     *
+     * @param data      待加密数据
+     * @param publicKey 公钥
+     * @return 加密后字符串, 采用Hex编码
+     */
+    public static String encryptByRsaHex(String data, String publicKey) {
+        if (StrUtil.isBlank(publicKey)) {
+            throw new IllegalArgumentException("RSA需要传入公钥进行加密");
+        }
+        validateRsaPublicKey(publicKey);
+        RSA rsa = SecureUtil.rsa(null, publicKey);
+        return rsa.encryptHex(data, StandardCharsets.UTF_8, KeyType.PublicKey);
+    }
+
+    /**
+     * rsa私钥解密
+     *
+     * @param data       待解密数据
+     * @param privateKey 私钥
+     * @return 解密后字符串
+     */
+    public static String decryptByRsa(String data, String privateKey) {
+        if (StrUtil.isBlank(privateKey)) {
+            throw new IllegalArgumentException("RSA需要传入私钥进行解密");
+        }
+        validateRsaPrivateKey(privateKey);
+        RSA rsa = SecureUtil.rsa(privateKey, null);
+        return rsa.decryptStr(data, KeyType.PrivateKey, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * 校验RSA公钥最低位数
+     *
+     * @param publicKey 公钥
+     */
+    public static void validateRsaPublicKey(String publicKey) {
+        if (StrUtil.isBlank(publicKey)) {
+            throw new IllegalArgumentException("RSA需要传入公钥");
+        }
+        try {
+            byte[] keyBytes = java.util.Base64.getDecoder().decode(publicKey);
+            RSAKey rsaKey = (RSAKey) KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(keyBytes));
+            validateRsaKeySize(rsaKey);
+        } catch (IllegalArgumentException | GeneralSecurityException e) {
+            throw new IllegalArgumentException("RSA公钥格式错误或密钥长度低于" + MIN_RSA_KEY_SIZE + "位", e);
+        }
+    }
+
+    /**
+     * 校验RSA私钥最低位数
+     *
+     * @param privateKey 私钥
+     */
+    public static void validateRsaPrivateKey(String privateKey) {
+        if (StrUtil.isBlank(privateKey)) {
+            throw new IllegalArgumentException("RSA需要传入私钥");
+        }
+        try {
+            byte[] keyBytes = java.util.Base64.getDecoder().decode(privateKey);
+            RSAKey rsaKey = (RSAKey) KeyFactory.getInstance("RSA").generatePrivate(new PKCS8EncodedKeySpec(keyBytes));
+            validateRsaKeySize(rsaKey);
+        } catch (IllegalArgumentException | GeneralSecurityException e) {
+            throw new IllegalArgumentException("RSA私钥格式错误或密钥长度低于" + MIN_RSA_KEY_SIZE + "位", e);
+        }
+    }
+
+    /**
+     * 校验 RSA 密钥长度是否满足最低安全要求。
+     *
+     * @param rsaKey RSA 密钥
+     */
+    private static void validateRsaKeySize(RSAKey rsaKey) {
+        int keySize = rsaKey.getModulus().bitLength();
+        if (keySize < MIN_RSA_KEY_SIZE) {
+            throw new IllegalArgumentException("RSA密钥长度不能低于" + MIN_RSA_KEY_SIZE + "位，当前为" + keySize + "位");
+        }
+    }
+
+    /**
+     * md5加密
+     *
+     * @param data 待加密数据
+     * @return 加密后字符串, 采用Hex编码
+     */
+    public static String encryptByMd5(String data) {
+        return SecureUtil.md5(data);
+    }
+
+    /**
+     * sha256加密
+     *
+     * @param data 待加密数据
+     * @return 加密后字符串, 采用Hex编码
+     */
+    public static String encryptBySha256(String data) {
+        return SecureUtil.sha256(data);
+    }
+
+    /**
+     * sm3加密
+     *
+     * @param data 待加密数据
+     * @return 加密后字符串, 采用Hex编码
+     */
+    public static String encryptBySm3(String data) {
+        return SmUtil.sm3(data);
+    }
+
+}

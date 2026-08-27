@@ -1,0 +1,626 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>group.aitools.nhs</groupId>
+    <artifactId>nhs-server</artifactId>
+    <version>${revision}</version>
+
+    <name>nhs backend</name>
+    <url>https://gitee.com/dromara/RuoYi-Vue-Plus</url>
+    <description>Enterprise agent work platform backend based on NHS-Vue-Plus</description>
+
+    <properties>
+        <!-- 项目基础配置 -->
+        <revision>6.0.0</revision>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <java.version>21</java.version>
+
+        <!-- Spring 生态依赖版本 -->
+        <spring-boot.version>4.1.0</spring-boot.version>
+        <spring-boot-admin.version>4.1.2</spring-boot-admin.version>
+        <spring-ai.version>2.0.0</spring-ai.version>
+        <mcp-sdk.version>2.0.0</mcp-sdk.version>
+        <tika.version>3.2.3</tika.version>
+        <agentscope.version>2.0.1</agentscope.version>
+        <springdoc.version>3.0.3</springdoc.version>
+
+        <!-- 数据访问与持久化相关依赖版本 -->
+        <mybatis.version>3.5.19</mybatis.version>
+        <mybatis-plus.version>3.5.17</mybatis-plus.version>
+        <mybatis-plus-join.version>1.5.9</mybatis-plus-join.version>
+        <dynamic-ds.version>4.5.0</dynamic-ds.version>
+        <anyline.version>8.7.3-20260306</anyline.version>
+        <easy-es.version>3.0.2</easy-es.version>
+        <elasticsearch-client.version>7.17.28</elasticsearch-client.version>
+
+        <!-- 安全认证与加密相关依赖版本 -->
+        <satoken.version>1.45.0</satoken.version>
+        <bouncycastle.version>1.85</bouncycastle.version>
+
+        <!-- 缓存、锁与任务调度相关依赖版本 -->
+        <redisson.version>4.6.1</redisson.version>
+        <lock4j.version>2.2.7</lock4j.version>
+        <snailjob.version>2.0.2</snailjob.version>
+        <snailai.version>1.1.1</snailai.version>
+
+        <!-- 通用工具、编译增强与代码生成相关依赖版本 -->
+        <hutool.version>5.8.47</hutool.version>
+        <mapstruct-plus.version>1.5.1</mapstruct-plus.version>
+        <mapstruct-plus.lombok.version>0.2.0</mapstruct-plus.lombok.version>
+        <lombok.version>1.18.46</lombok.version>
+        <therapi-javadoc.version>0.15.0</therapi-javadoc.version>
+        <fesod.version>2.0.2-incubating</fesod.version>
+        <fory.version>1.3.0</fory.version>
+
+        <!-- 三方集成与业务扩展相关依赖版本 -->
+        <!-- 离线IP地址定位库 -->
+        <ip2region.version>3.3.7</ip2region.version>
+        <!-- OSS 配置 -->
+        <aws.sdk.version>2.48.1</aws.sdk.version>
+        <!-- SMS 配置 -->
+        <sms4j.version>3.3.5</sms4j.version>
+        <!-- 工作流配置 -->
+        <warm-flow.version>1.8.9</warm-flow.version>
+        <liteflow.version>2.16.1.2</liteflow.version>
+        <!-- mqtt客户端 -->
+        <mica-mqtt.version>2.6.8</mica-mqtt.version>
+
+        <!-- Maven 构建插件版本 -->
+        <maven-jar-plugin.version>3.5.0</maven-jar-plugin.version>
+        <maven-war-plugin.version>3.5.1</maven-war-plugin.version>
+        <maven-compiler-plugin.version>3.15.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.5</maven-surefire-plugin.version>
+        <!-- 统一版本号管理：Maven3.X需要，Maven4.0之后已原生支持 -->
+        <flatten-maven-plugin.version>1.7.3</flatten-maven-plugin.version>
+        <!-- 打包默认跳过测试 -->
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>local</profiles.active>
+                <logging.level>info</logging.level>
+                <monitor.username>nhs</monitor.username>
+                <monitor.password>123456</monitor.password>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <!-- 环境标识，需要与配置文件的名称相对应 -->
+                <profiles.active>dev</profiles.active>
+                <logging.level>info</logging.level>
+                <monitor.username>nhs</monitor.username>
+                <monitor.password>123456</monitor.password>
+            </properties>
+            <activation>
+                <!-- 默认环境 -->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+                <logging.level>warn</logging.level>
+                <monitor.username>nhs</monitor.username>
+                <monitor.password>123456</monitor.password>
+            </properties>
+        </profile>
+    </profiles>
+
+    <!-- 依赖声明 -->
+    <dependencyManagement>
+        <dependencies>
+
+            <!-- SpringBoot的依赖配置-->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Spring AI MCP 依赖配置 -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- AgentScope Java runtime modules are locked as one compatible release. -->
+            <dependency>
+                <groupId>io.agentscope</groupId>
+                <artifactId>agentscope-bom</artifactId>
+                <version>${agentscope.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- hutool 的依赖配置-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-bom</artifactId>
+                <version>${hutool.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- sa-token-bom 依赖 -->
+            <!-- Sa-Token 权限认证, 在线文档：http://sa-token.dev33.cn/ -->
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-bom</artifactId>
+                <version>${satoken.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- common 的依赖配置-->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-common-bom</artifactId>
+                <version>${revision}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- 接口文档 -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+                <version>${springdoc.version}</version>
+            </dependency>
+
+            <!-- JavaDoc 运行时读取 -->
+            <dependency>
+                <groupId>com.github.therapi</groupId>
+                <artifactId>therapi-runtime-javadoc</artifactId>
+                <version>${therapi-javadoc.version}</version>
+            </dependency>
+
+            <!-- lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <!-- fesod (EasyExcel/FastExcel的前身) 的依赖 -->
+            <dependency>
+                <groupId>org.apache.fesod</groupId>
+                <artifactId>fesod-sheet</artifactId>
+                <version>${fesod.version}</version>
+            </dependency>
+
+            <!-- dynamic-datasource 多数据源-->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>dynamic-datasource-spring-boot4-starter</artifactId>
+                <version>${dynamic-ds.version}</version>
+            </dependency>
+
+            <!-- MyBatis 核心 -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+
+            <!-- MyBatis Plus 启动器 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-spring-boot4-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- MyBatis Plus JSqlParser 支持 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-jsqlparser</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- MyBatis Plus 注解 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-annotation</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- MyBatis Plus Join -->
+            <dependency>
+                <groupId>com.github.yulichang</groupId>
+                <artifactId>mybatis-plus-join-boot-starter</artifactId>
+                <version>${mybatis-plus-join.version}</version>
+            </dependency>
+
+            <!--  AWS SDK for Java 2.x  -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3</artifactId>
+                <version>${aws.sdk.version}</version>
+            </dependency>
+            <!-- 客户端的性能增强传输管理器 -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>s3-transfer-manager</artifactId>
+                <version>${aws.sdk.version}</version>
+            </dependency>
+            <!-- 适用于 Netty 的客户端 -->
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>netty-nio-client</artifactId>
+                <version>${aws.sdk.version}</version>
+            </dependency>
+            <!--短信sms4j-->
+            <dependency>
+                <groupId>org.dromara.sms4j</groupId>
+                <artifactId>sms4j-spring-boot-starter</artifactId>
+                <version>${sms4j.version}</version>
+            </dependency>
+
+            <!-- Spring Boot Admin 服务端 -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-server</artifactId>
+                <version>${spring-boot-admin.version}</version>
+            </dependency>
+            <!-- Spring Boot Admin 客户端 -->
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-starter-client</artifactId>
+                <version>${spring-boot-admin.version}</version>
+            </dependency>
+
+            <!--redisson-->
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>${redisson.version}</version>
+            </dependency>
+
+            <!-- 分布式锁 -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>lock4j-redisson-spring-boot-starter</artifactId>
+                <version>${lock4j.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.fory</groupId>
+                <artifactId>fory-core</artifactId>
+                <version>${fory.version}</version>
+            </dependency>
+
+            <!-- SnailJob Client -->
+            <dependency>
+                <groupId>com.aizuda</groupId>
+                <artifactId>snail-job-client-starter</artifactId>
+                <version>${snailjob.version}</version>
+            </dependency>
+            <!-- SnailJob 重试核心 -->
+            <dependency>
+                <groupId>com.aizuda</groupId>
+                <artifactId>snail-job-client-retry-core</artifactId>
+                <version>${snailjob.version}</version>
+            </dependency>
+            <!-- SnailJob 任务核心 -->
+            <dependency>
+                <groupId>com.aizuda</groupId>
+                <artifactId>snail-job-client-job-core</artifactId>
+                <version>${snailjob.version}</version>
+            </dependency>
+
+            <!-- Snail AI Agent 聊天室 -->
+            <dependency>
+                <groupId>com.aizuda</groupId>
+                <artifactId>snail-ai-agent-chat-starter</artifactId>
+                <version>${snailai.version}</version>
+            </dependency>
+
+            <!-- Snail AI Agent 执行器 -->
+            <dependency>
+                <groupId>com.aizuda</groupId>
+                <artifactId>snail-ai-agent-executor-starter</artifactId>
+                <version>${snailai.version}</version>
+            </dependency>
+
+            <!-- Snail AI OpenAPI 启动器 -->
+            <dependency>
+                <groupId>com.aizuda</groupId>
+                <artifactId>snail-ai-openapi-starter</artifactId>
+                <version>${snailai.version}</version>
+            </dependency>
+
+            <!-- 加密包引入 -->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcpkix-jdk18on</artifactId>
+                <version>${bouncycastle.version}</version>
+            </dependency>
+
+            <!-- Mapstruct Plus -->
+            <dependency>
+                <groupId>io.github.linpeilie</groupId>
+                <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
+                <version>${mapstruct-plus.version}</version>
+            </dependency>
+
+            <!-- Warm-Flow国产工作流引擎, 在线文档：http://warm-flow.cn/ -->
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-mybatis-plus-sb4-starter</artifactId>
+                <version>${warm-flow.version}</version>
+            </dependency>
+            <!-- Warm-Flow UI 插件 -->
+            <dependency>
+                <groupId>org.dromara.warm</groupId>
+                <artifactId>warm-flow-plugin-ui-sb-web</artifactId>
+                <version>${warm-flow.version}</version>
+            </dependency>
+
+            <!-- LiteFlow 规则编排引擎 -->
+            <dependency>
+                <groupId>com.yomahub</groupId>
+                <artifactId>liteflow-spring-boot-starter</artifactId>
+                <version>${liteflow.version}</version>
+            </dependency>
+
+            <!-- mqtt客户端 -->
+            <dependency>
+                <groupId>org.dromara.mica-mqtt</groupId>
+                <artifactId>mica-mqtt-client-spring-boot-starter</artifactId>
+                <version>${mica-mqtt.version}</version>
+            </dependency>
+
+            <!-- Easy-Es 搜索引擎 -->
+            <dependency>
+                <groupId>org.dromara.easy-es</groupId>
+                <artifactId>easy-es-boot-starter</artifactId>
+                <version>${easy-es.version}</version>
+            </dependency>
+
+            <!-- Elasticsearch Java 客户端 -->
+            <dependency>
+                <groupId>co.elastic.clients</groupId>
+                <artifactId>elasticsearch-java</artifactId>
+                <version>${elasticsearch-client.version}</version>
+            </dependency>
+
+            <!-- Elasticsearch REST 客户端 -->
+            <dependency>
+                <groupId>org.elasticsearch.client</groupId>
+                <artifactId>elasticsearch-rest-client</artifactId>
+                <version>${elasticsearch-client.version}</version>
+            </dependency>
+
+            <!-- 离线IP地址定位库 ip2region -->
+            <dependency>
+                <groupId>org.lionsoul</groupId>
+                <artifactId>ip2region</artifactId>
+                <version>${ip2region.version}</version>
+            </dependency>
+
+            <!-- 系统模块 -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-system</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 调度任务模块 -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-job</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- AI业务模块 -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-ai</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- Agent platform business module -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-platform</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-runtime-spi</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-runtime-agentscope</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- 代码生成模块 -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-gen</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!-- demo模块 -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-demo</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!--  工作流模块  -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-workflow</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <!--  api模块  -->
+            <dependency>
+                <groupId>group.aitools.nhs</groupId>
+                <artifactId>nhs-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <modules>
+        <!-- web服务入口 -->
+        <module>nhs-admin</module>
+        <!-- common 通用模块 -->
+        <module>nhs-common</module>
+        <!-- 扩展模块 -->
+        <module>nhs-extend</module>
+        <!-- 业务模块 -->
+        <module>nhs-modules</module>
+        <!-- api模块 -->
+        <module>nhs-api</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <release>${java.version}</release>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.github.therapi</groupId>
+                            <artifactId>therapi-runtime-javadoc-scribe</artifactId>
+                            <version>${therapi-javadoc.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>${spring-boot.version}</version>
+                        </path>
+                        <path>
+                            <groupId>io.github.linpeilie</groupId>
+                            <artifactId>mapstruct-plus-processor</artifactId>
+                            <version>${mapstruct-plus.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>${mapstruct-plus.lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+            <!-- 单元测试使用 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <argLine>-Dfile.encoding=UTF-8</argLine>
+                    <!-- 根据打包环境执行对应的@Tag测试方法 -->
+                    <groups>${profiles.active}</groups>
+                    <!-- 排除标签 -->
+                    <excludedGroups>exclude</excludedGroups>
+                </configuration>
+            </plugin>
+            <!-- 统一版本号管理 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
+                <configuration>
+                    <updatePomFile>true</updatePomFile>
+                    <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten.clean</id>
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 关闭过滤 -->
+                <filtering>false</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 引入所有 匹配文件进行过滤 -->
+                <includes>
+                    <include>application*</include>
+                    <include>bootstrap*</include>
+                    <include>banner*</include>
+                </includes>
+                <!-- 启用过滤 即该资源中的变量将会被过滤器中的值替换 -->
+                <filtering>true</filtering>
+            </resource>
+        </resources>
+    </build>
+
+    <repositories>
+        <repository>
+            <id>public</id>
+            <name>huawei nexus</name>
+            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>public</id>
+            <name>huawei nexus</name>
+            <url>https://mirrors.huaweicloud.com/repository/maven/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
+</project>

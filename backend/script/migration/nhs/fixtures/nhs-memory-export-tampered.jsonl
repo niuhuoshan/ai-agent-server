@@ -1,0 +1,1 @@
+{"conversationId":"redis-conv-tampered","kind":"conversation","messages":[{"completion_tokens":0,"content":"Tampered after export","prompt_tokens":3,"role":"user","timestamp":"2026-01-12T08:00:00","trace_id":"redis-trace-1"}],"recordHash":"df4f4bec54817e2acc198e759da6fc18bff2eb23d8dd69065d2005bae3eb174a","ttl":3600,"userId":"102"}

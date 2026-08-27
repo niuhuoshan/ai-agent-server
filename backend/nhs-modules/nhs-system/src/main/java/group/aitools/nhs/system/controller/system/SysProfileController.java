@@ -1,0 +1,126 @@
+package group.aitools.nhs.system.controller.system;
+
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.crypto.digest.BCrypt;
+import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
+import group.aitools.nhs.common.core.domain.R;
+import group.aitools.nhs.common.core.utils.StringUtils;
+import group.aitools.nhs.common.encrypt.annotation.ApiEncrypt;
+import group.aitools.nhs.common.log.annotation.Log;
+import group.aitools.nhs.common.log.enums.BusinessType;
+import group.aitools.nhs.common.mybatis.helper.DataPermissionHelper;
+import group.aitools.nhs.common.redis.annotation.RepeatSubmit;
+import group.aitools.nhs.common.satoken.utils.LoginHelper;
+import group.aitools.nhs.common.web.core.BaseController;
+import group.aitools.nhs.system.domain.bo.SysUserBo;
+import group.aitools.nhs.system.domain.bo.SysUserProfileBo;
+import group.aitools.nhs.system.domain.vo.ProfileUserVo;
+import group.aitools.nhs.system.domain.vo.SysUserVo;
+import group.aitools.nhs.system.service.ISysUserService;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+/**
+ * 个人信息 业务处理
+ *
+ * @author Lion Li
+ */
+@Validated
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/system/user/profile")
+public class SysProfileController extends BaseController {
+
+    private final ISysUserService userService;
+
+    /**
+     * 获取当前登录用户的个人中心信息。
+     *
+     * @return 用户信息、角色组和岗位组
+     */
+    @GetMapping
+    public R<ProfileVo> profile() {
+        SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
+        String roleGroup = userService.selectUserRoleGroup(user.getUserId());
+        String postGroup = userService.selectUserPostGroup(user.getUserId());
+        // 单独做一个vo专门给个人中心用 避免数据被脱敏
+        ProfileUserVo profileUser = BeanUtil.toBean(user, ProfileUserVo.class);
+        ProfileVo profileVo = new ProfileVo(profileUser, roleGroup, postGroup);
+        return R.ok(profileVo);
+    }
+
+    /**
+     * 修改当前登录用户的个人资料。
+     *
+     * @param profile 个人资料参数
+     * @return 操作结果
+     */
+    @RepeatSubmit
+    @Log(title = "个人信息", businessType = BusinessType.UPDATE)
+    @PutMapping
+    public R<Void> updateProfile(@Validated @RequestBody SysUserProfileBo profile) {
+        SysUserBo user = BeanUtil.toBean(profile, SysUserBo.class);
+        user.setUserId(LoginHelper.getUserId());
+        String username = LoginHelper.getUsername();
+        if (StringUtils.isNotEmpty(user.getPhoneNumber()) && !userService.checkPhoneUnique(user)) {
+            return R.fail("修改用户'" + username + "'失败，手机号码已存在");
+        }
+        if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
+            return R.fail("修改用户'" + username + "'失败，邮箱账号已存在");
+        }
+        int rows = DataPermissionHelper.ignore(() -> userService.updateUserProfile(user));
+        if (rows > 0) {
+            return R.ok();
+        }
+        return R.fail("修改个人信息异常，请联系管理员");
+    }
+
+    /**
+     * 重置密码
+     *
+     * @param bo 新旧密码
+     * @return 操作结果
+     */
+    @RepeatSubmit
+    @ApiEncrypt
+    @Log(title = "个人信息", businessType = BusinessType.UPDATE)
+    @PutMapping("/updatePwd")
+    public R<Void> updatePwd(@Validated @RequestBody SysUserPasswordBo bo) {
+        SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
+        String password = user.getPassword();
+        if (!BCrypt.checkpw(bo.oldPassword(), password)) {
+            return R.fail("修改密码失败，旧密码错误");
+        }
+        if (BCrypt.checkpw(bo.newPassword(), password)) {
+            return R.fail("新密码不能与旧密码相同");
+        }
+        int rows = DataPermissionHelper.ignore(() -> userService.resetUserPwd(user.getUserId(), BCrypt.hashpw(bo.newPassword())));
+        if (rows > 0) {
+            return R.ok();
+        }
+        return R.fail("修改密码异常，请联系管理员");
+    }
+
+    /**
+     * 用户个人信息
+     *
+     * @param user      用户信息
+     * @param roleGroup 用户所属角色组
+     * @param postGroup 用户所属岗位组
+     */
+    public record ProfileVo(ProfileUserVo user, String roleGroup, String postGroup) {
+    }
+
+    /**
+     * 用户密码修改
+     *
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     */
+    public record SysUserPasswordBo(
+        @NotBlank(message = "旧密码不能为空") String oldPassword,
+        @NotBlank(message = "新密码不能为空") String newPassword) {
+    }
+
+}

@@ -1,0 +1,16 @@
+services:
+  nhs-browser-worker:
+    build: .
+    container_name: nhs-browser-worker
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8787:8787"
+    environment:
+      PORT: "8787"
+      MAX_TABS_PER_SESSION: "8"
+      UPLOAD_ROOT: /uploads
+    volumes:
+      - ./uploads:/uploads:ro
+    init: true
+    security_opt:
+      - no-new-privileges:true

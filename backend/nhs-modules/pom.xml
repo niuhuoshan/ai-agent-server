@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>nhs-server</artifactId>
+        <groupId>group.aitools.nhs</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>nhs-modules</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        nhs-modules 业务模块
+    </description>
+
+    <modules>
+        <module>nhs-demo</module>
+        <module>nhs-gen</module>
+        <module>nhs-job</module>
+        <module>nhs-system</module>
+        <module>nhs-workflow</module>
+        <module>nhs-ai</module>
+        <module>nhs-runtime-spi</module>
+        <module>nhs-runtime-agentscope</module>
+        <module>nhs-platform</module>
+        <module>nhs-sandbox-runner</module>
+        <module>nhs-migration-cli</module>
+    </modules>
+
+</project>

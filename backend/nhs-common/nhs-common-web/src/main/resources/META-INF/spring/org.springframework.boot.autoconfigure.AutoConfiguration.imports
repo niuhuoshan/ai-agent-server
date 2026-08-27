@@ -1,0 +1,4 @@
+group.aitools.nhs.common.web.config.CaptchaConfig
+group.aitools.nhs.common.web.config.FilterConfig
+group.aitools.nhs.common.web.config.I18nConfig
+group.aitools.nhs.common.web.config.ResourcesConfig

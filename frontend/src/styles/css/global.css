@@ -1,0 +1,163 @@
+@import './reset.css';
+@import './nprogress.css';
+@import './transition.css';
+
+html,
+body,
+#app {
+  height: 100%;
+  text-autospace: normal;
+}
+
+/*
+ * Custom workspaces use the same semantic names as Naive UI, but those
+ * component variables are scoped to individual components. Keep a small
+ * global compatibility layer backed by the app theme tokens so page-level
+ * surfaces remain visible outside a Naive UI component tree.
+ */
+:root {
+  --n-color: rgb(var(--container-bg-color, 255 255 255));
+  --n-color-modal: rgb(var(--container-bg-color, 255 255 255));
+  --n-primary-color: rgb(var(--primary-color, 100 108 255));
+  --n-text-color: rgb(var(--base-text-color, 31 31 31));
+  --n-text-color-2: color-mix(in srgb, rgb(var(--base-text-color, 31 31 31)) 82%, transparent);
+  --n-text-color-3: color-mix(in srgb, rgb(var(--base-text-color, 31 31 31)) 58%, transparent);
+  --n-border-color: color-mix(in srgb, rgb(var(--base-text-color, 31 31 31)) 14%, transparent);
+  --n-action-color: color-mix(in srgb, rgb(var(--base-text-color, 31 31 31)) 5%, transparent);
+}
+
+/* Shared data-surface rhythm for every Naive UI table and tab set. */
+:where(.n-data-table) {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+:where(.n-data-table .n-data-table-th),
+:where(.n-data-table .n-data-table-td) {
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+:where(.n-data-table .n-data-table-pagination) {
+  min-height: 48px;
+  align-items: center;
+}
+
+:where(.n-tabs) {
+  min-width: 0;
+}
+
+:where(.n-tabs .n-tabs-nav) {
+  min-height: 46px;
+}
+
+:where(.n-tabs .n-tabs-tab) {
+  white-space: nowrap;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+/* Shared styling for page-owned tab lists that are not rendered by Naive UI. */
+:where(.app-tab-list) {
+  display: flex;
+  min-width: 0;
+  gap: 4px;
+}
+
+.app-tab-list .app-tab {
+  display: inline-flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  color: var(--n-text-color-3);
+  background: transparent;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease, border-color 160ms ease;
+  white-space: nowrap;
+}
+
+.app-tab-list .app-tab:hover,
+.app-tab-list .app-tab:focus-visible,
+.app-tab-list .app-tab.is-active,
+.app-tab-list .app-tab.active {
+  color: var(--n-primary-color);
+}
+
+.app-tab-list--line {
+  overflow-x: auto;
+  border-bottom: 1px solid var(--n-border-color);
+  scrollbar-width: thin;
+}
+
+.app-tab-list--line .app-tab {
+  min-height: 46px;
+  padding: 12px 4px 13px;
+  border-bottom: 2px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.app-tab-list--line .app-tab:hover,
+.app-tab-list--line .app-tab:focus-visible {
+  outline: 0;
+  color: var(--n-text-color);
+}
+
+.app-tab-list--line .app-tab.is-active,
+.app-tab-list--line .app-tab.active {
+  border-bottom-color: var(--n-primary-color);
+  font-weight: 650;
+}
+
+.app-tab-list--segment {
+  overflow-x: auto;
+  padding: 4px;
+  border: 1px solid var(--n-border-color);
+  border-radius: 8px;
+  background: var(--n-action-color);
+  scrollbar-width: thin;
+}
+
+.app-tab-list--segment .app-tab {
+  min-height: 34px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.app-tab-list--segment .app-tab:hover,
+.app-tab-list--segment .app-tab:focus-visible,
+.app-tab-list--segment .app-tab.is-active,
+.app-tab-list--segment .app-tab.active {
+  outline: 0;
+  color: var(--n-primary-color);
+  background: var(--n-color);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+}
+
+.app-tab-list--compact .app-tab {
+  min-height: 32px;
+  padding: 6px 10px;
+}
+
+@media (max-width: 760px) {
+  :where(.n-data-table) {
+    overflow-x: auto;
+  }
+
+  :where(.n-tabs .n-tabs-nav) {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  :where(.app-tab-list) {
+    overflow-x: auto;
+  }
+}
+
+html {
+  overflow-x: hidden;
+  color: rgb(var(--base-text-color));
+}

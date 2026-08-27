@@ -1,0 +1,40 @@
+package com.aizuda.snail.ai.starter.filter;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * 权限安全配置
+ *
+ * @author Lion Li
+ */
+@Configuration
+public class SecurityConfig {
+
+    /**
+     * 认证用户名。
+     */
+    @Value("${spring.boot.admin.client.username}")
+    private String username;
+    /**
+     * 认证密码。
+     */
+    @Value("${spring.boot.admin.client.password}")
+    private String password;
+
+    /**
+     * 注册 Actuator Basic Auth 过滤器。
+     *
+     * @return Actuator 过滤器注册对象
+     */
+    @Bean
+    public FilterRegistrationBean<ActuatorAuthFilter> actuatorFilterRegistrationBean() {
+        FilterRegistrationBean<ActuatorAuthFilter> registrationBean = new FilterRegistrationBean<>();
+        registrationBean.setFilter(new ActuatorAuthFilter(username, password));
+        registrationBean.addUrlPatterns("/actuator", "/actuator/*");
+        return registrationBean;
+    }
+
+}

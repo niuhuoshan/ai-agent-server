@@ -1,0 +1,31 @@
+package group.aitools.nhs.common.mqtt.listener;
+
+import lombok.extern.slf4j.Slf4j;
+import net.dreamlu.mica.net.core.ChannelContext;
+import org.dromara.mica.mqtt.codec.message.MqttPublishMessage;
+import org.dromara.mica.mqtt.core.client.IMqttClientGlobalMessageListener;
+
+import java.nio.charset.StandardCharsets;
+
+/**
+ * 全局消息监听，可以监听到所有订阅消息
+ *
+ * @author Lion Li
+ */
+@Slf4j
+public class MqttClientGlobalMessageListener implements IMqttClientGlobalMessageListener {
+
+    /**
+     * 接收并记录全局 MQTT 消息。
+     *
+     * @param context 通道上下文
+     * @param topic   主题
+     * @param message MQTT 消息对象
+     * @param payload 消息载荷
+     */
+    @Override
+    public void onMessage(ChannelContext context, String topic, MqttPublishMessage message, byte[] payload) {
+        log.info("MqttGlobalMessageEvent => topic: {}, msg: {}", topic, new String(payload, StandardCharsets.UTF_8));
+    }
+
+}

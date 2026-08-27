@@ -1,0 +1,58 @@
+# IDE and operating-system metadata
+/.idea/
+/.vscode/
+*.iml
+*.iws
+*.ipr
+.DS_Store
+Thumbs.db
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+!.env.*.example
+!frontend/.env
+!frontend/.env.prod
+!frontend/.env.test
+*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+
+# Runtime output and temporary files
+**/logs/
+**/*.log
+**/*.log.*
+**/tmp/
+**/temp/
+**/.cache/
+**/*.pid
+**/*.pid.lock
+**/*.hprof
+**/hs_err_pid*
+**/replay_pid*
+
+# Build, dependency, and test output
+**/node_modules/
+**/target/
+**/dist/
+**/coverage/
+**/out/
+**/.nyc_output/
+**/.vite/
+**/.turbo/
+**/.pnpm-store/
+**/.eslintcache
+**/.stylelintcache
+**/*.tsbuildinfo
+**/playwright-report/
+**/test-results/
+**/allure-results/
+**/allure-report/
+
+# Browser Worker runtime mounts
+/browser-worker/uploads/

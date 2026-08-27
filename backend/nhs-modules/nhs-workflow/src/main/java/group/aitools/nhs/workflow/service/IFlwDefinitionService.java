@@ -1,0 +1,72 @@
+package group.aitools.nhs.workflow.service;
+
+import jakarta.servlet.http.HttpServletResponse;
+import group.aitools.nhs.common.core.domain.PageResult;
+import group.aitools.nhs.common.mybatis.core.page.PageQuery;
+import org.dromara.warm.flow.orm.entity.FlowDefinition;
+import group.aitools.nhs.workflow.domain.vo.FlowDefinitionVo;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.Collection;
+
+/**
+ * 流程定义 服务层
+ *
+ * @author may
+ */
+public interface IFlwDefinitionService {
+
+    /**
+     * 查询流程定义列表
+     *
+     * @param flowDefinition 参数
+     * @param pageQuery      分页
+     * @return 返回分页列表
+     */
+    PageResult<FlowDefinitionVo> queryList(FlowDefinition flowDefinition, PageQuery pageQuery);
+
+    /**
+     * 查询未发布的流程定义列表
+     *
+     * @param flowDefinition 参数
+     * @param pageQuery      分页
+     * @return 返回分页列表
+     */
+    PageResult<FlowDefinitionVo> unPublishList(FlowDefinition flowDefinition, PageQuery pageQuery);
+
+    /**
+     * 发布流程定义
+     *
+     * @param id 流程定义id
+     * @return 是否发布成功
+     */
+    boolean publish(Long id);
+
+    /**
+     * 导出流程定义
+     *
+     * @param id       流程定义id
+     * @param response 响应
+     * @throws IOException 异常
+     */
+    void exportDef(Long id, HttpServletResponse response) throws IOException;
+
+    /**
+     * 导入流程定义
+     *
+     * @param file     文件
+     * @param category 分类
+     * @return 是否导入成功
+     */
+    boolean importJson(MultipartFile file, String category);
+
+    /**
+     * 删除流程定义
+     *
+     * @param ids 流程定义id
+     * @return 是否删除成功
+     */
+    boolean removeDef(Collection<Long> ids);
+
+}

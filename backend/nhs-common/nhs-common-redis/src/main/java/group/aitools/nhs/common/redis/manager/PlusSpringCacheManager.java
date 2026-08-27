@@ -1,0 +1,315 @@
+/**
+ * Copyright (c) 2013-2021 Nikita Koksharov
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package group.aitools.nhs.common.redis.manager;
+
+import group.aitools.nhs.common.redis.utils.RedisUtils;
+import org.redisson.api.RMap;
+import org.redisson.api.RMapCache;
+import org.redisson.api.map.event.MapEntryListener;
+import org.redisson.spring.cache.CacheConfig;
+import org.redisson.spring.cache.RedissonCache;
+import org.springframework.boot.convert.DurationStyle;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.transaction.TransactionAwareCacheDecorator;
+import org.springframework.util.StringUtils;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+/**
+ * A {@link org.springframework.cache.CacheManager} implementation
+ * backed by Redisson instance.
+ * <p>
+ * 修改 RedissonSpringCacheManager 源码
+ * 重写 cacheName 处理方法 支持多参数
+ *
+ * @author Nikita Koksharov
+ *
+ */
+@SuppressWarnings("unchecked")
+public class PlusSpringCacheManager implements CacheManager {
+
+    private boolean dynamic = true;
+
+    private boolean allowNullValues = true;
+
+    private boolean transactionAware = true;
+
+    Map<String, CacheConfig> configMap = new ConcurrentHashMap<>();
+    ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap<>();
+
+    private final com.github.benmanes.caffeine.cache.Cache<Object, Object> caffeine;
+
+    /**
+     * 创建基于 Redisson 的缓存管理器。
+     */
+    public PlusSpringCacheManager() {
+        this(null);
+    }
+
+    /**
+     * 创建基于 Redisson 的缓存管理器。
+     *
+     * @param caffeine 本地一级缓存实例
+     */
+    public PlusSpringCacheManager(com.github.benmanes.caffeine.cache.Cache<Object, Object> caffeine) {
+        this.caffeine = caffeine;
+    }
+
+
+    /**
+ * 设置{@code AllowNullValues}。
+ *
+     * Defines possibility of storing {@code null} values.
+     * <p>
+     * Default is <code>true</code>
+     *
+     * @param allowNullValues stores if <code>true</code>
+     */
+    public void setAllowNullValues(boolean allowNullValues) {
+        this.allowNullValues = allowNullValues;
+    }
+
+    /**
+ * 设置{@code TransactionAware}。
+ *
+     * Defines if cache aware of Spring-managed transactions.
+     * If {@code true} put/evict operations are executed only for successful transaction in after-commit phase.
+     * <p>
+     * Default is <code>false</code>
+     *
+     * @param transactionAware cache is transaction aware if <code>true</code>
+     */
+    public void setTransactionAware(boolean transactionAware) {
+        this.transactionAware = transactionAware;
+    }
+
+    /**
+ * 设置缓存Names。
+ *
+     * Defines 'fixed' cache names.
+     * A new cache instance will not be created in dynamic for non-defined names.
+     * <p>
+     * `null` parameter setups dynamic mode
+     *
+     * @param names of caches
+     */
+    public void setCacheNames(Collection<String> names) {
+        if (names != null) {
+            for (String name : names) {
+                getCache(name);
+            }
+            dynamic = false;
+        } else {
+            dynamic = true;
+        }
+    }
+
+    /**
+ * 设置{@code Config}。
+ *
+     * Set cache config mapped by cache name
+     *
+     * @param config object
+     */
+    public void setConfig(Map<String, ? extends CacheConfig> config) {
+        if (config == null) {
+            this.configMap = new ConcurrentHashMap<>();
+            return;
+        }
+        this.configMap = new ConcurrentHashMap<>((Map<String, CacheConfig>) config);
+    }
+
+    /**
+     * 创建默认缓存配置。
+     *
+     * @return 默认缓存配置
+     */
+    protected CacheConfig createDefaultConfig() {
+        return new CacheConfig();
+    }
+
+    /**
+     * 按缓存名称获取缓存实例，并支持通过扩展参数动态设置 TTL、最大空闲时间和容量。
+     *
+     * @param name 缓存名称，支持 `cacheName#ttl#maxIdle#maxSize#local` 格式
+     * @return 缓存实例
+     */
+    @Override
+    public Cache getCache(String name) {
+        String cacheName = name;
+        // 重写 cacheName 支持多参数
+        String[] array = StringUtils.delimitedListToStringArray(name, "#");
+        name = array[0];
+
+        Cache cache = instanceMap.get(cacheName);
+        if (cache != null) {
+            return cache;
+        }
+        if (!dynamic) {
+            return cache;
+        }
+
+        CacheConfig config = resolveCacheConfig(cacheName, name, array);
+
+        int local = resolveLocal(array);
+        if (config.getMaxIdleTime() == 0 && config.getTTL() == 0 && config.getMaxSize() == 0) {
+            return createMap(cacheName, name, config, local);
+        }
+
+        return createMapCache(cacheName, name, config, local);
+    }
+
+    /**
+     * 解析缓存配置，支持从模板配置复制并叠加缓存名称中的扩展参数。
+     *
+     * @param cacheName 完整缓存名称
+     * @param name      基础缓存名称
+     * @param array     缓存名称拆分参数
+     * @return 缓存配置
+     */
+    private CacheConfig resolveCacheConfig(String cacheName, String name, String[] array) {
+        // 以下流程按业务条件逐级校验并选择处理分支，条件不满足时会提前终止。
+        CacheConfig config = configMap.get(cacheName);
+        if (config != null) {
+            return config;
+        }
+
+        CacheConfig template = configMap.get(name);
+        if (template != null) {
+            config = copyConfig(template);
+        }
+        if (config == null) {
+            config = createDefaultConfig();
+        }
+
+        if (array.length > 1) {
+            config.setTTL(DurationStyle.detectAndParse(array[1]).toMillis());
+        }
+        if (array.length > 2) {
+            config.setMaxIdleTime(DurationStyle.detectAndParse(array[2]).toMillis());
+        }
+        if (array.length > 3) {
+            config.setMaxSize(Integer.parseInt(array[3]));
+        }
+        configMap.put(cacheName, config);
+        return config;
+    }
+
+    /**
+     * 解析是否启用本地一级缓存。
+     *
+     * @param array 缓存名称拆分参数
+     * @return 本地缓存开关
+     */
+    private int resolveLocal(String[] array) {
+        int local = 1;
+        if (array.length > 4) {
+            local = Integer.parseInt(array[4]);
+        }
+        return local;
+    }
+
+    /**
+     * 复制 Redisson 缓存配置，避免修改模板配置。
+     *
+     * @param source 模板缓存配置
+     * @return 新缓存配置
+     */
+    private CacheConfig copyConfig(CacheConfig source) {
+        CacheConfig target = new CacheConfig();
+        target.setTTL(source.getTTL());
+        target.setMaxIdleTime(source.getMaxIdleTime());
+        target.setMaxSize(source.getMaxSize());
+        target.setEvictionMode(source.getEvictionMode());
+        for (MapEntryListener listener : source.getListeners()) {
+            target.addListener(listener);
+        }
+        return target;
+    }
+
+    /**
+     * 创建普通 Map 类型缓存。
+     *
+     * @param name   缓存名称
+     * @param config 缓存配置
+     * @param local  是否启用本地一级缓存
+     * @return 缓存实例
+     */
+    private Cache createMap(String cacheName, String name, CacheConfig config, int local) {
+        RMap<Object, Object> map = RedisUtils.getClient().getMap(name);
+
+        Cache cache = new RedissonCache(map, allowNullValues);
+        if (local == 1 && caffeine != null) {
+            cache = new CaffeineCacheDecorator(cacheName, cache, caffeine);
+        }
+        if (transactionAware) {
+            cache = new TransactionAwareCacheDecorator(cache);
+        }
+        Cache oldCache = instanceMap.putIfAbsent(cacheName, cache);
+        if (oldCache != null) {
+            cache = oldCache;
+        }
+        return cache;
+    }
+
+    /**
+     * 创建带过期策略的 MapCache 类型缓存。
+     *
+     * @param name   缓存名称
+     * @param config 缓存配置
+     * @param local  是否启用本地一级缓存
+     * @return 缓存实例
+     */
+    private Cache createMapCache(String cacheName, String name, CacheConfig config, int local) {
+        // 以下流程逐项处理输入数据，并在遍历过程中应用必要的校验与状态更新。
+        RMapCache<Object, Object> map = RedisUtils.getClient().getMapCache(name);
+
+        Cache cache = new RedissonCache(map, config, allowNullValues);
+        if (local == 1 && caffeine != null) {
+            cache = new CaffeineCacheDecorator(cacheName, cache, caffeine);
+        }
+        if (transactionAware) {
+            cache = new TransactionAwareCacheDecorator(cache);
+        }
+        Cache oldCache = instanceMap.putIfAbsent(cacheName, cache);
+        if (oldCache != null) {
+            cache = oldCache;
+        } else {
+            map.setMaxSize(config.getMaxSize());
+            for (MapEntryListener listener : config.getListeners()) {
+                map.addListener(listener);
+            }
+        }
+        return cache;
+    }
+
+    /**
+     * 获取当前缓存名称集合。
+     *
+     * @return 缓存名称集合
+     */
+    @Override
+    public Collection<String> getCacheNames() {
+        return Collections.unmodifiableSet(configMap.keySet());
+    }
+
+
+}

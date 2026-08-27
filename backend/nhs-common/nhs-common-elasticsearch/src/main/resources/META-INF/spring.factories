@@ -1,0 +1,2 @@
+org.springframework.boot.EnvironmentPostProcessor=\
+  group.aitools.nhs.common.elasticsearch.config.ActuatorEnvironmentPostProcessor

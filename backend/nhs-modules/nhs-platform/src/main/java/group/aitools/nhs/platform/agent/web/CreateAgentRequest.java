@@ -1,0 +1,38 @@
+package group.aitools.nhs.platform.agent.web;
+
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
+import java.util.Map;
+
+/**
+ * 封装Create智能体相关的不可变数据。
+ * Creates an Agent identity without implicitly publishing executable configuration. */
+public record CreateAgentRequest(
+    @NotBlank @Size(max = 128)
+    @Pattern(regexp = "[a-z][a-z0-9._-]{0,127}") String agentKey,
+    @NotBlank @Size(max = 128) String name,
+    @Size(max = 4000) String description,
+    @NotBlank @Pattern(regexp = "general|assistant|knowledge|data|coding|supervisor") String agentType,
+    @Pattern(regexp = "agentscope_java") String engineType,
+    @Size(max = 512) String avatarUrl,
+    boolean defaultAgent,
+    @Min(-10_000) @Max(10_000) int sortOrder,
+    Map<String, Object> engineConfig
+) {
+
+    /**
+     * 处理{@code rejectUnknownField}相关逻辑。
+     *
+     * @param field {@code field}参数
+     * @param ignored {@code ignored}参数
+     */
+    @JsonAnySetter
+    public void rejectUnknownField(String field, Object ignored) {
+        throw new IllegalArgumentException("不支持的 Agent 字段：" + field);
+    }
+}

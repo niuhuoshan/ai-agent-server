@@ -1,0 +1,127 @@
+package group.aitools.nhs.web.service.impl;
+
+import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.stp.parameter.SaLoginParameter;
+import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.crypto.digest.BCrypt;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import group.aitools.nhs.common.core.constant.Constants;
+import group.aitools.nhs.common.core.constant.GlobalConstants;
+import group.aitools.nhs.common.core.constant.SystemConstants;
+import group.aitools.nhs.common.core.enums.LoginType;
+import group.aitools.nhs.common.core.exception.user.CaptchaException;
+import group.aitools.nhs.common.core.exception.user.CaptchaExpireException;
+import group.aitools.nhs.common.core.exception.user.UserException;
+import group.aitools.nhs.common.core.utils.MessageUtils;
+import group.aitools.nhs.common.core.utils.StringUtils;
+import group.aitools.nhs.common.core.utils.ValidatorUtils;
+import group.aitools.nhs.common.json.utils.JsonUtils;
+import group.aitools.nhs.common.redis.utils.RedisUtils;
+import group.aitools.nhs.common.satoken.utils.LoginHelper;
+import group.aitools.nhs.common.web.config.properties.CaptchaProperties;
+import group.aitools.nhs.system.api.model.LoginUser;
+import group.aitools.nhs.system.api.model.PasswordLoginBody;
+import group.aitools.nhs.system.domain.SysUser;
+import group.aitools.nhs.system.domain.vo.SysClientVo;
+import group.aitools.nhs.system.domain.vo.SysUserVo;
+import group.aitools.nhs.system.mapper.SysUserMapper;
+import group.aitools.nhs.web.domain.vo.LoginVo;
+import group.aitools.nhs.web.service.IAuthStrategy;
+import group.aitools.nhs.web.service.SysLoginService;
+import org.springframework.stereotype.Service;
+
+/**
+ * 密码认证策略
+ *
+ * @author Michelle.Chung
+ */
+@Slf4j
+@Service("password" + IAuthStrategy.BASE_NAME)
+@RequiredArgsConstructor
+public class PasswordAuthStrategy implements IAuthStrategy {
+
+    private final CaptchaProperties captchaProperties;
+    private final SysLoginService loginService;
+    private final SysUserMapper userMapper;
+
+    /**
+     * 执行账号密码登录，并按客户端配置生成访问令牌。
+     *
+     * @param body   登录请求体
+     * @param client 当前客户端配置
+     * @return 登录结果
+     */
+    @Override
+    public LoginVo login(String body, SysClientVo client) {
+        PasswordLoginBody loginBody = JsonUtils.parseObject(body, PasswordLoginBody.class);
+        ValidatorUtils.validate(loginBody);
+        String username = loginBody.getUsername();
+        String password = loginBody.getPassword();
+        String code = loginBody.getCode();
+        String uuid = loginBody.getUuid();
+
+        boolean captchaEnabled = captchaProperties.getEnable();
+        // 验证码开关
+        if (captchaEnabled) {
+            validateCaptcha(username, code, uuid);
+        }
+        SysUserVo user = loadUserByUsername(username);
+        loginService.checkLogin(LoginType.PASSWORD, username, () -> !BCrypt.checkpw(password, user.getPassword()));
+        // 此处可根据登录用户的数据不同 自行创建 loginUser
+        LoginUser loginUser = loginService.buildLoginUser(user);
+        loginUser.setClientKey(client.getClientKey());
+        loginUser.setDeviceType(client.getDeviceType());
+        SaLoginParameter model = IAuthStrategy.buildLoginParameter(client);
+        // 生成token
+        LoginHelper.login(loginUser, model);
+
+        LoginVo loginVo = new LoginVo();
+        loginVo.setAccessToken(StpUtil.getTokenValue());
+        loginVo.setExpireIn(StpUtil.getTokenTimeout());
+        loginVo.setClientId(client.getClientId());
+        return loginVo;
+    }
+
+    /**
+     * 校验图形验证码是否有效且匹配。
+     *
+     * @param username 用户名
+     * @param code     用户输入的验证码
+     * @param uuid     验证码缓存标识
+     */
+    private void validateCaptcha(String username, String code, String uuid) {
+        String verifyKey = GlobalConstants.CAPTCHA_CODE_KEY + StringUtils.blankToDefault(uuid, "");
+        String captcha = RedisUtils.getCacheObject(verifyKey);
+        RedisUtils.deleteObject(verifyKey);
+        if (captcha == null) {
+            loginService.recordLoginInfo(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire"));
+            throw new CaptchaExpireException();
+        }
+        if (!StringUtils.equalsIgnoreCase(code, captcha)) {
+            loginService.recordLoginInfo(username, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.error"));
+            throw new CaptchaException();
+        }
+    }
+
+    /**
+     * 按用户名加载可登录用户，并校验是否存在或被停用。
+     *
+     * @param username 用户名
+     * @return 用户信息
+     */
+    private SysUserVo loadUserByUsername(String username) {
+        SysUserVo user = userMapper.lambda()
+            .eq(SysUser::getUserName, username)
+            .voOne();
+        if (ObjectUtil.isNull(user)) {
+            log.info("登录用户：{} 不存在.", username);
+            throw new UserException("user.not.exists", username);
+        } else if (SystemConstants.DISABLE.equals(user.getStatus())) {
+            log.info("登录用户：{} 已被停用.", username);
+            throw new UserException("user.blocked", username);
+        }
+        return user;
+    }
+
+}
