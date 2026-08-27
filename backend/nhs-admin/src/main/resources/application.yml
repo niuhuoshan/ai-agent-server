@@ -153,7 +153,7 @@ mybatis-encryptor:
 # api接口加密
 api-decrypt:
   # 是否开启全局接口加密
-  enabled: true
+  enabled: ${API_DECRYPT_ENABLED:false}
   # AES 加密头标识
   headerFlag: encrypt-key
   # 响应加密公钥 非对称算法的公私钥 如：SM2，RSA 使用者请自行更换
@@ -275,7 +275,7 @@ mqtt.client:
   # 客户端Id（非常重要，一般为设备 sn，不可重复）
   client-id: 000001
   username: nhs
-  password: 123456
+  password: ${MQTT_PASSWORD:}
   # 超时时间，单位：秒，默认：5秒
   timeout: 5
   # 重连时间，默认 5000 毫秒

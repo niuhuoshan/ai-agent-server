@@ -56,3 +56,11 @@ Thumbs.db
 
 # Browser Worker runtime mounts
 /browser-worker/uploads/
+
+# Local/upstream development metadata
+/backend/.claude/
+/backend/.codex/
+/backend/.gitee/
+/backend/.run/
+/frontend/.github/
+/frontend/.vscode/
