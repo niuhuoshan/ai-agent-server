@@ -18,7 +18,7 @@ spring:
   boot:
     admin:
       ui:
-        title: NHS-Vue-Plus服务监控中心
+        title: 牛火山企业智能体平台服务监控中心
       context-path: /admin
   # 忽略无用警告
   thymeleaf:

@@ -22,7 +22,7 @@ public class NhsApplication {
         SpringApplication application = new SpringApplication(NhsApplication.class);
         application.setApplicationStartup(new BufferingApplicationStartup(2048));
         application.run(args);
-        System.out.println("nhs 启动成功");
+        System.out.println("牛火山企业智能体平台启动成功");
     }
 
 }

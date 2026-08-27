@@ -47,7 +47,7 @@ const isWatermarkTextVisible = computed(
         type="text"
         size="small"
         class="w-120px"
-        placeholder="nhs"
+        placeholder="牛火山企业智能体平台"
       />
     </SettingItem>
   </TransitionGroup>

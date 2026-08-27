@@ -101,7 +101,7 @@ public class AuthController {
                 PushPayloadDTO.of(
                     PushTypeEnum.MESSAGE,
                     PushSourceEnum.BACKEND,
-                    DateUtils.getTodayHour(new Date()) + "好，欢迎登录企业级智能体工作平台",
+                    DateUtils.getTodayHour(new Date()) + "好，欢迎登录牛火山企业智能体平台",
                     null
                 )
             );

@@ -18,7 +18,7 @@ describe('API Playground specification boundary', () => {
     expect(result.components?.securitySchemes?.SessionBearer).toMatchObject({
       type: 'http', scheme: 'bearer'
     });
-    expect(result.servers).toEqual([{ url: '/proxy-default', description: '当前 Agent Server' }]);
+    expect(result.servers).toEqual([{ url: '/proxy-default', description: '当前牛火山企业智能体平台' }]);
   });
 
   it('normalizes the API document URL without changing the configured base path', () => {

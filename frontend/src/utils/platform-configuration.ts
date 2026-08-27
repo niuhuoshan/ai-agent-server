@@ -24,7 +24,7 @@ export function applyPublicPlatformConfiguration(configuration: PublicPlatformCo
 }
 
 export function platformDocumentTitle(routeTitle?: string | null) {
-  const productName = readPublicPlatformConfiguration()?.productName || '企业级智能体工作平台';
+  const productName = readPublicPlatformConfiguration()?.productName || '牛火山企业智能体平台';
   const normalized = routeTitle?.trim();
   return !normalized || normalized === productName ? productName : `${normalized} | ${productName}`;
 }

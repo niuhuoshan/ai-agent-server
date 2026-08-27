@@ -1,4 +1,4 @@
-# Agent Browser Worker
+# 牛火山企业智能体平台 Browser Worker
 
 This is the isolated Playwright process used by the Java browser-control domain.
 It is intentionally separate from the application JVM and keeps browser sessions

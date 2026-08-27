@@ -119,8 +119,8 @@ describe('system operations API', () => {
 
   it('sends the optimistic revision and change reason when saving configuration', () => {
     const payload = {
-      productName: '企业级智能体工作平台',
-      productShortName: '智能体平台',
+      productName: '牛火山企业智能体平台',
+      productShortName: '牛火山',
       logoUrl: '/assets/logo.svg',
       faviconUrl: '/favicon.svg',
       primaryColor: '#18A058',

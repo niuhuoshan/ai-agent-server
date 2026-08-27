@@ -63,9 +63,7 @@ onMounted(async () => {
     <NGrid :x-gap="gap" :y-gap="16" responsive="screen" item-responsive>
       <NGi span="24 s:24 m:18">
         <div class="flex-y-center">
-          <div class="size-72px shrink-0 overflow-hidden rd-1/2">
-            <img src="@/assets/imgs/soybean.jpg" class="size-full" />
-          </div>
+          <div class="platform-avatar size-72px shrink-0 overflow-hidden rd-1/2" aria-label="牛火山企业智能体平台">牛</div>
           <div class="pl-12px">
             <h3 class="text-18px font-semibold">
               {{ $t('page.home.greeting', { userName: authStore.userInfo.userName }) }}
@@ -83,4 +81,14 @@ onMounted(async () => {
   </NCard>
 </template>
 
-<style scoped></style>
+<style scoped>
+.platform-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #18a058;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 600;
+}
+</style>

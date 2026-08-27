@@ -168,16 +168,15 @@ springdoc:
     enabled: true
   info:
     # 标题
-    title: '标题：企业级智能体工作平台_接口文档'
+    title: '标题：牛火山企业智能体平台_接口文档'
     # 描述
-    description: '描述：私有化部署的企业 AI 工作执行平台'
+    description: '描述：牛火山企业智能体平台私有化 AI 工作执行能力'
     # 版本
     version: '版本号: ${project.version}'
     # 作者信息
     contact:
-      name: Lion Li
-      email: crazylionli@163.com
-      url: https://gitee.com/dromara/NHS-Vue-Plus
+      name: 牛火山技术团队
+      url: https://github.com/niuhuoshan/agent-server
   #这里定义了两个分组，可定义多个，也可以不定义
   group-configs:
     - group: 1.演示模块

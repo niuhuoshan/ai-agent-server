@@ -1,14 +1,14 @@
-# nhs
+# Niuhuoshan Enterprise Agent Platform
 
 [中文](README.md) | **English**
 
-`nhs` is an engineering implementation of a general-purpose enterprise Agent platform built on Java 21 and AgentScope Java. Centered on four core domains - task-driven execution, digital employees, workspaces, and business integration - the system is organized into a control plane, runtime plane, execution plane, and governance plane. The control plane provides declarative configuration and versioned publication for Agents, models, Skills, MCP services, knowledge, and data resources; the runtime plane handles multi-Agent collaboration, context orchestration, tool routing, and event streams; the execution plane delivers RPA-like controlled operations and isolated computing through Browser and Sandbox environments; and the governance plane unifies identity, authorization, approval, risk control, auditing, and usage metering. By supporting capability composition and direct collaboration across domain-specific Agents, the platform aims to transform model inference into enterprise digital productivity that is authorizable, executable, observable, verifiable, and traceable.
+Niuhuoshan Enterprise Agent Platform (internal codename: `nhs`) is an engineering implementation of a general-purpose enterprise Agent platform built on Java 21 and AgentScope Java. Centered on four core domains - task-driven execution, digital employees, workspaces, and business integration - the system is organized into a control plane, runtime plane, execution plane, and governance plane. The control plane provides declarative configuration and versioned publication for Agents, models, Skills, MCP services, knowledge, and data resources; the runtime plane handles multi-Agent collaboration, context orchestration, tool routing, and event streams; the execution plane delivers RPA-like controlled operations and isolated computing through Browser and Sandbox environments; and the governance plane unifies identity, authorization, approval, risk control, auditing, and usage metering. By supporting capability composition and direct collaboration across domain-specific Agents, the platform aims to transform model inference into enterprise digital productivity that is authorizable, executable, observable, verifiable, and traceable.
 
 > Documentation status: project snapshot as of August 27, 2026. This repository is suitable as a business and engineering reference for continued development, modular extraction, or a future redesign. It should not be treated as a production-validated release.
 
 ## 1. Project Positioning
 
-`nhs` is neither a standalone chat interface nor an Agent configuration tool intended only for developers. The product is divided into three connected but permission-isolated work surfaces for distinct user groups:
+Niuhuoshan Enterprise Agent Platform is neither a standalone chat interface nor an Agent configuration tool intended only for developers. The product is divided into three connected but permission-isolated work surfaces for distinct user groups:
 
 | Surface | Primary users | Entry points | Core objective |
 | --- | --- | --- | --- |
@@ -303,6 +303,6 @@ Primary constraints:
 
 ## 9. Open-Source Licenses
 
-The backend is based on [RuoYi-Vue-Plus](https://github.com/dromara/RuoYi-Vue-Plus), and the frontend is based on [SoybeanAdmin](https://github.com/soybeanjs/soybean-admin). Both projects are licensed under the MIT License; their license files are retained at `backend/LICENSE` and `frontend/LICENSE`, respectively.
+The backend is based on [RuoYi-Vue-Plus](https://github.com/dromara/RuoYi-Vue-Plus), and the frontend is based on [SoybeanAdmin](https://github.com/soybeanjs/soybean-admin). Both projects are licensed under the MIT License; their license files are retained at `backend/LICENSE` and `frontend/LICENSE`, respectively. `nhs` is retained only as the internal codename for source packages, services, and database objects.
 
 > Future direction: because the Java ecosystem for AI Agents remains relatively constrained, future development is planned as a newly designed, open-source Python project. This repository will remain available as a reference for the existing business implementation and architecture.

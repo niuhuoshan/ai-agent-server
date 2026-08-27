@@ -95,7 +95,7 @@ const local: App.I18n.Schema = {
         applySuccess: '预设应用成功',
         default: {
           name: '默认预设',
-          desc: 'Soybean 默认主题预设'
+          desc: '牛火山企业智能体平台默认主题预设'
         },
         dark: {
           name: '暗色预设',
@@ -329,16 +329,16 @@ const local: App.I18n.Schema = {
       projectNews: {
         title: '项目动态',
         moreNews: '更多动态',
-        desc1: 'Soybean 在2021年5月28日创建了开源项目 soybean-admin!',
-        desc2: 'Yanbowe 向 soybean-admin 提交了一个bug，多标签栏不会自适应。',
-        desc3: 'Soybean 准备为 soybean-admin 的发布做充分的准备工作!',
-        desc4: 'Soybean 正在忙于为soybean-admin写项目说明文档！',
-        desc5: 'Soybean 刚才把工作台页面随便写了一些，凑合能看了！'
+        desc1: '牛火山企业智能体平台已上线新的智能体工作流能力。',
+        desc2: '任务看板支持按状态、优先级和项目上下文快速筛选。',
+        desc3: '模型连接测试与运行状态监控已接入管理工作台。',
+        desc4: '知识库检索策略支持版本化配置与效果评估。',
+        desc5: '治理中心现可查看审计事件与 Token 用量趋势。'
       },
       creativity: '创意'
     },
     workspace: {
-      welcome: '欢迎使用智能体工作平台',
+      welcome: '欢迎使用牛火山企业智能体平台',
       welcomeDesc: '开始您的智能体任务之旅',
       chatTitle: '智能对话',
       chatPlaceholder: '输入消息，按 Enter 发送',

@@ -8,9 +8,9 @@
     <artifactId>nhs-server</artifactId>
     <version>${revision}</version>
 
-    <name>nhs backend</name>
-    <url>https://gitee.com/dromara/RuoYi-Vue-Plus</url>
-    <description>Enterprise agent work platform backend based on NHS-Vue-Plus</description>
+    <name>牛火山企业智能体平台后端</name>
+    <url>https://github.com/niuhuoshan/agent-server</url>
+    <description>牛火山企业智能体平台后端，内部代号 nhs</description>
 
     <properties>
         <!-- 项目基础配置 -->

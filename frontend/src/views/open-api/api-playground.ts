@@ -33,7 +33,7 @@ export function filterNhsV1Spec(source: OpenApiDocument, serverUrl: string) {
   const securitySchemes = components.securitySchemes || {};
   return {
     ...source,
-    servers: [{ url: serverUrl, description: '当前 Agent Server' }],
+    servers: [{ url: serverUrl, description: '当前牛火山企业智能体平台' }],
     paths,
     components: {
       ...components,

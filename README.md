@@ -1,14 +1,14 @@
-# nhs
+# 牛火山企业智能体平台
 
 [**中文**](README.md) | [English](README_EN.md)
 
-`nhs` 是基于 Java 21 与 AgentScope Java 构建的企业级通用智能体平台工程实践，围绕任务驱动、数字员工、工作空间与业务接入四个核心域，将系统划分为控制面、运行时、执行面与治理面：控制面负责 Agent、模型、Skill、MCP、知识与数据资源的声明式配置和版本化发布；运行时承载多 Agent 协作、上下文编排、工具路由与事件流；执行面通过 Browser 与 Sandbox 提供类 RPA 的受控操作环境和隔离计算能力；治理面统一接入身份、权限、审批、风控、审计与用量计量。平台支持多垂类 Agent 的能力装配与相互通信，目标是将模型推理转化为可授权、可执行、可观测、可验收、可追溯的企业级数字生产力。
+牛火山企业智能体平台（内部代号：`nhs`）是基于 Java 21 与 AgentScope Java 构建的企业级通用智能体平台工程实践，围绕任务驱动、数字员工、工作空间与业务接入四个核心域，将系统划分为控制面、运行时、执行面与治理面：控制面负责 Agent、模型、Skill、MCP、知识与数据资源的声明式配置和版本化发布；运行时承载多 Agent 协作、上下文编排、工具路由与事件流；执行面通过 Browser 与 Sandbox 提供类 RPA 的受控操作环境和隔离计算能力；治理面统一接入身份、权限、审批、风控、审计与用量计量。平台支持多垂类 Agent 的能力装配与相互通信，目标是将模型推理转化为可授权、可执行、可观测、可验收、可追溯的企业级数字生产力。
 
 > 文档状态：2026-08-27 项目快照。当前仓库适合作为后续续建、拆分或重构的业务与工程参考，不应直接视为已经完成生产验收的发布版本。
 
 ## 1. 项目定位
 
-`nhs` 不是单纯的聊天页面，也不是只供研发人员使用的 Agent 配置工具。产品按使用人群拆成三个相互关联、权限隔离的工作面：
+牛火山企业智能体平台不是单纯的聊天页面，也不是只供研发人员使用的 Agent 配置工具。产品按使用人群拆成三个相互关联、权限隔离的工作面：
 
 
 | 工作面   | 主要用户                 | 入口                                       | 核心目标                                   |
@@ -315,6 +315,6 @@ flowchart LR
 
 ## 9. 开源许可
 
-后端基于 [RuoYi-Vue-Plus](https://github.com/dromara/RuoYi-Vue-Plus)，前端基于 [SoybeanAdmin](https://github.com/soybeanjs/soybean-admin)，两个项目均采用 MIT License，许可证文件分别保留在 `backend/LICENSE` 和 `frontend/LICENSE`。
+后端基于 [RuoYi-Vue-Plus](https://github.com/dromara/RuoYi-Vue-Plus)，前端基于 [SoybeanAdmin](https://github.com/soybeanjs/soybean-admin)，两个项目均采用 MIT License，许可证文件分别保留在 `backend/LICENSE` 和 `frontend/LICENSE`。`nhs` 仅作为源码、服务和数据库对象的内部代号，产品名称为“牛火山企业智能体平台”。
 
 > 后续计划：考虑到 AI 智能体领域的 Java 生态仍相对受限，项目后续将以全新的 Python 项目形态重新设计并开源，本仓库继续作为现有业务实现与架构设计的参考保留。

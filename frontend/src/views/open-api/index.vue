@@ -283,7 +283,7 @@ async function createEmbedDebugSession() {
       embedUrl: `${window.location.origin}/embed/chat`,
       credential: launch.credential,
       theme: 'auto',
-      context: { debugger: 'soybean-admin', locale: navigator.language }
+      context: { debugger: 'niuhuoshan-admin', locale: navigator.language }
     });
     embedEvents.value = [];
     embedWidget.on('*', (payload, envelope) => {
@@ -702,7 +702,7 @@ onMounted(loadData);
         </div>
       </NTabPane>
       <NTabPane name="archives" tab="迁移归档">
-        <NAlert type="info" :bordered="false" class="identity-alert">仅展示 Nhs 迁移执行的只读元数据，不暴露原始输入、输出或凭证内容。</NAlert>
+        <NAlert type="info" :bordered="false" class="identity-alert">仅展示历史迁移执行的只读元数据，不暴露原始输入、输出或凭证内容。</NAlert>
         <NSpace class="archive-filters" align="center">
           <NInput v-model:value="archiveFilters.traceId" clearable placeholder="源 Trace ID" @keyup.enter="loadArchives" />
           <NInput v-model:value="archiveFilters.executionId" clearable placeholder="源 Execution ID" @keyup.enter="loadArchives" />

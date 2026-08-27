@@ -987,7 +987,7 @@ onBeforeUnmount(() => {
           <template #icon><SvgIcon icon="lucide:send" /></template>
         </NButton>
       </div>
-      <div v-if="application?.watermark" class="watermark">Agent Server</div>
+      <div v-if="application?.watermark" class="watermark">牛火山企业智能体平台</div>
     </footer>
   </main>
 </template>

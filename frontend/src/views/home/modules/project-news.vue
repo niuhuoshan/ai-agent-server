@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { fetchNotifications } from '@/service/api';
+import PlatformAvatar from '@/components/custom/soybean-avatar.vue';
 
 defineOptions({
   name: 'ProjectNews'
@@ -32,7 +33,7 @@ onMounted(async () => {
     <NList>
       <NListItem v-for="item in newses" :key="item.id">
         <template #prefix>
-          <SoybeanAvatar class="size-48px!" />
+          <PlatformAvatar class="size-48px!" />
         </template>
         <NThing :title="item.content" :description="item.time" />
       </NListItem>

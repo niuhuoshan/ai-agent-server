@@ -333,16 +333,16 @@ const local: App.I18n.Schema = {
       projectNews: {
         title: 'Project News',
         moreNews: 'More News',
-        desc1: 'Soybean created the open source project soybean-admin on May 28, 2021!',
-        desc2: 'Yanbowe submitted a bug to soybean-admin, the multi-tab bar will not adapt.',
-        desc3: 'Soybean is ready to do sufficient preparation for the release of soybean-admin!',
-        desc4: 'Soybean is busy writing project documentation for soybean-admin!',
-        desc5: 'Soybean just wrote some of the workbench pages casually, and it was enough to see!'
+        desc1: 'Niuhuoshan Enterprise Agent Platform shipped a new agent workflow capability.',
+        desc2: 'The task board now supports filtering by status, priority, and project context.',
+        desc3: 'Model connection tests and runtime health monitoring are now available in the console.',
+        desc4: 'Knowledge retrieval strategies now support versioned configuration and evaluation.',
+        desc5: 'The governance center now exposes audit events and token usage trends.'
       },
       creativity: 'Creativity'
     },
     workspace: {
-      welcome: 'Welcome to Agent Platform',
+      welcome: 'Welcome to Niuhuoshan Enterprise Agent Platform',
       welcomeDesc: 'Start your agent task journey',
       chatTitle: 'AI Chat',
       chatPlaceholder: 'Type a message, press Enter to send',

@@ -1,29 +1,30 @@
 {
-  "name": "nhs-frontend",
+  "name": "niuhuoshan-agent-platform-frontend",
   "version": "2.2.0",
-  "description": "A fresh and elegant admin template, based on Vue3、Vite8、TypeScript、NaiveUI and UnoCSS. 一个基于Vue3、Vite8、TypeScript、NaiveUI and UnoCSS的清新优雅的中后台模版。",
+  "description": "牛火山企业智能体平台前端，面向企业级智能体工作空间、配置管理与治理运营场景。 Niuhuoshan Enterprise Agent Platform frontend for enterprise agent workspaces, configuration, and governance.",
   "keywords": [
     "TypeScript",
     "UnoCSS",
     "Vite8",
     "Vue3 admin ",
-    "ant-design-vue v4",
     "naive-ui",
-    "naive-ui-admin",
-    "vue-admin-template"
+    "enterprise-agent",
+    "agent-platform",
+    "agent-workspace",
+    "governance-console"
   ],
-  "homepage": "https://github.com/soybeanjs/soybean-admin",
+  "homepage": "https://github.com/niuhuoshan/agent-server",
   "bugs": {
-    "url": "https://github.com/soybeanjs/soybean-admin/issues"
+    "url": "https://github.com/niuhuoshan/agent-server/issues"
   },
   "license": "MIT",
   "author": {
-    "name": "Soybean",
-    "email": "soybeanjs@outlook.com",
-    "url": "https://github.com/soybeanjs"
+    "name": "牛火山技术团队",
+    "url": "https://github.com/niuhuoshan"
   },
   "repository": {
-    "url": "https://github.com/soybeanjs/soybean-admin.git"
+    "type": "git",
+    "url": "https://github.com/niuhuoshan/agent-server.git"
   },
   "type": "module",
   "scripts": {
@@ -121,5 +122,5 @@
     "node": ">=20.19.0",
     "pnpm": ">=10.5.0"
   },
-  "website": "https://admin.soybeanjs.cn"
+  "website": "https://github.com/niuhuoshan/agent-server"
 }

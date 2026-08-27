@@ -239,7 +239,7 @@ onMounted(load);
             <img v-if="form.logoUrl && !logoFailed" :src="form.logoUrl" alt="平台 Logo 预览" @error="logoFailed = true" />
             <SvgIcon v-else icon="lucide:sparkles" />
           </div>
-          <div><strong>{{ form.productShortName || '智能体平台' }}</strong><span>{{ form.productName || '企业级智能体工作平台' }}</span></div>
+          <div><strong>{{ form.productShortName || '牛火山' }}</strong><span>{{ form.productName || '牛火山企业智能体平台' }}</span></div>
           <NTag size="small" :color="{ color: form.primaryColor, textColor: '#fff', borderColor: form.primaryColor }">品牌预览</NTag>
         </div>
 
